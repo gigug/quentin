@@ -16,7 +16,7 @@ public class BoardGUI {
     private final int size;
 
     private final JFrame gameFrame;
-    private final ExternalPanel externalPanel;
+    //private final ExternalPanel externalPanel;
 
     private final Color backgroundColor = Color.decode("#815E5B");
     private final Color lineColor = Color.decode("#000000");
@@ -40,10 +40,10 @@ public class BoardGUI {
         final JMenuBar tableMenuBar = createTableMenuBar();
 
         // Initialize externalPanel
-        this.externalPanel = new ExternalPanel(board);
+        //this.externalPanel = new ExternalPanel(board);
 
         // Add externalPanel to JFrame
-        this.gameFrame.add(externalPanel);
+        //this.gameFrame.add(externalPanel);
 
         // Add JMenuBar
         this.gameFrame.setJMenuBar(tableMenuBar);
@@ -65,7 +65,7 @@ public class BoardGUI {
         newGameMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Change THIS!");
+                openPlayerSelectionWindow();
             }
         });
         fileMenu.add(newGameMenuItem);
@@ -91,6 +91,26 @@ public class BoardGUI {
         return fileMenu;
     }
 
+    private void openPlayerSelectionWindow(){
+        playerSelectionWindow newPlayerSelectionWindow = new playerSelectionWindow();
+        this.gameFrame.add(newPlayerSelectionWindow);
+    }
+    private class playerSelectionWindow extends JPanel{
+        playerSelectionWindow(){
+            super(new GridBagLayout());
+
+            JButton blackPlayerButton = new JButton("Black");
+            JButton whitePlayerButton = new JButton("White");
+
+            setBackground(Color.YELLOW);
+
+            add(blackPlayerButton);
+            add(whitePlayerButton);
+
+            validate();
+        }
+    }
+
     private class ExternalPanel extends JPanel{
 
         ExternalPanel(Board board){
@@ -113,9 +133,9 @@ public class BoardGUI {
             super(new GridLayout(BoardGUI.this.size, BoardGUI.this.size));
             this.boardTiles = new ArrayList<>();
 
-            for(int i = 0; i < BoardGUI.this.size; i++){
-                for(int j = 0; j < BoardGUI.this.size; j++){
-                    final TilePanel tilePanel = new TilePanel(i*BoardGUI.this.size + j);
+            for(int tileIdY = 0; tileIdY < BoardGUI.this.size; tileIdY++){
+                for(int tileIdX = 0; tileIdX < BoardGUI.this.size; tileIdX++){
+                    final TilePanel tilePanel = new TilePanel(tileIdX, tileIdY);
                     this.boardTiles.add(tilePanel);
                     add(tilePanel);
                 }
@@ -127,11 +147,13 @@ public class BoardGUI {
     }
 
     private class TilePanel extends JPanel {
-        private final int tileId;
+        private final int tileIdX;
+        private final int tileIdY;
 
-        TilePanel(final int tileId){
+        TilePanel(final int tileIdX, final int tileIdY){
             super(new GridBagLayout());
-            this.tileId = tileId;
+            this.tileIdX = tileIdX;
+            this.tileIdY = tileIdY;
 
             setPreferredSize(TILE_PANEL_DIMENSION);
             validate();
@@ -157,7 +179,7 @@ public class BoardGUI {
             float thicknessExternal = 20;
 
             // xy reorganize this as nested ifs to reduce boilerplate
-            if (this.tileId == 0){ // upper-left
+            if (this.tileIdX == 0 && this.tileIdY == 0){ // upper-left
                 thickness1 = 4;
                 thickness2 = 4;
                 vX1 = 20;
@@ -177,7 +199,7 @@ public class BoardGUI {
                 g2.setColor(externalVerticalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(0, 0, 0, 40);
-            } else if (this.tileId == BoardGUI.this.size - 1) { // upper-right
+            } else if (this.tileIdX == (BoardGUI.this.size - 1) && this.tileIdY == 0) { // upper-right
                 thickness1 = 4;
                 thickness2 = 4;
                 vX1 = 20;
@@ -197,7 +219,7 @@ public class BoardGUI {
                 g2.setColor(externalVerticalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(40, 0, 40, 40);
-            } else if (this.tileId == BoardGUI.this.size*(BoardGUI.this.size - 1)) { // lower-left
+            } else if (this.tileIdX == 0 && this.tileIdY == (BoardGUI.this.size - 1)) { // lower-left
                 thickness1 = 4;
                 thickness2 = 4;
                 vX1 = 20;
@@ -217,7 +239,7 @@ public class BoardGUI {
                 g2.setColor(externalVerticalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(0, 0, 0, 40);
-            } else if (this.tileId == BoardGUI.this.size*BoardGUI.this.size - 1) { // lower-right
+            } else if (this.tileIdX == (BoardGUI.this.size - 1) && this.tileIdY == (BoardGUI.this.size - 1)) { // lower-right
                 thickness1 = 4;
                 thickness2 = 4;
                 vX1 = 20;
@@ -237,7 +259,7 @@ public class BoardGUI {
                 g2.setColor(externalVerticalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(40, 0, 40, 40);
-            } else if (this.tileId > 0 && this.tileId < BoardGUI.this.size - 1){ // upper flank
+            } else if (this.tileIdX > 0 && this.tileIdX < (BoardGUI.this.size - 1) && this.tileIdY == 0){ // upper flank
                 thickness1 = 4;
                 thickness2 = 2;
                 vX1 = 20;
@@ -253,7 +275,7 @@ public class BoardGUI {
                 g2.setColor(externalHorizontalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(0, 0, 40, 0);
-            } else if (this.tileId % BoardGUI.this.size == 0){ // left flank
+            } else if (this.tileIdX == 0 && this.tileIdY > 0 && this.tileIdY < (BoardGUI.this.size - 1)){ // left flank
                 thickness1 = 2;
                 thickness2 = 4;
                 vX1 = 20;
@@ -269,7 +291,7 @@ public class BoardGUI {
                 g2.setColor(externalVerticalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(0, 0, 0, 40);
-            } else if ((this.tileId + 1) % BoardGUI.this.size == 0 && this.tileId != BoardGUI.this.size - 1){ // right flank
+            } else if (this.tileIdX == (BoardGUI.this.size - 1) && this.tileIdY > 0 && this.tileIdY < (BoardGUI.this.size - 1)){ // right flank
                 thickness1 = 2;
                 thickness2 = 4;
                 vX1 = 20;
@@ -285,7 +307,7 @@ public class BoardGUI {
                 g2.setColor(externalVerticalLineColor);
                 g2.setStroke(new BasicStroke(thicknessExternal));
                 g2.drawLine(40, 0, 40, 40);
-            } else if (this.tileId > BoardGUI.this.size*(BoardGUI.this.size - 1) && this.tileId < BoardGUI.this.size*BoardGUI.this.size){ // lower flank
+            } else if (this.tileIdX > 0 && this.tileIdX < (BoardGUI.this.size - 1) && this.tileIdY == (BoardGUI.this.size - 1)){ // lower flank
                 thickness1 = 4;
                 thickness2 = 2;
                 vX1 = 20;

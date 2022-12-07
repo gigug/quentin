@@ -8,16 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class TestBoard {
     Board board = new Board(3);
-    int[] testGrid = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int[][] testGrid = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
     
-    void demoTest(){
+    void testGrid(){
         assertArrayEquals(board.grid, testGrid);
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 3, 5})
+    @ValueSource(ints = {0, 1, 2})
     public void testGetPiece(int tileId) {
-        assertEquals(board.getPiece(tileId), 0);
+
+        assertEquals(board.getPiece(tileId, tileId), 0);
     }
 
 

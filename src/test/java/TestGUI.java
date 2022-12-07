@@ -1,4 +1,5 @@
 import gui.BoardGUI;
+import objects.Board;
 
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,11 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGUI {
     private final int SIZE_GRID = 10;
-    BoardGUI boardGUI = new BoardGUI(SIZE_GRID);
+    Board board = new Board(SIZE_GRID);
+    BoardGUI boardGUI = new BoardGUI(board);
 
     @ParameterizedTest
-    @CsvSource({"0, 0", "1, 5", "20,20"})
-    public void show_pawn(int x, int y){
+    @CsvSource({"0, 0", "1, 5", "20, 20"})
+    public void testShowPawn(int x, int y){
         assertTrue(true);
     }
 
