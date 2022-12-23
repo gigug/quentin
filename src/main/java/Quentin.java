@@ -1,18 +1,18 @@
 import gui.BoardGUI;
+import gui.StartGUI;
 import screens.Game;
 
-import java.util.Arrays;
 public class Quentin {
     public static void main(String[] args){
-        // read size in input
-        int size = Integer.parseInt(args[0]);
+
+        // start GUI
+        StartGUI startGUI = new StartGUI();
 
         // initialize and start game
-        Game game = new Game(size);
+        //Game game = new Game();
 
-        BoardGUI boardGUI = new BoardGUI(game.board);
+        //BoardGUI boardGUI = new BoardGUI(game.board);
 
-        game.board.viewGrid();
-        game.play();
+        //game.play();
     }
 }

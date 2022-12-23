@@ -6,12 +6,6 @@ import objects.Board;
 import java.awt.*;
 
 public class Game {
-    /*static class tempTile{
-        Color color;
-        int group;
-
-    }
-    tempTile array[][];*/
 
     // initialize the two players
     Player player1 = new Player(1);
@@ -22,26 +16,25 @@ public class Game {
     public Board board;
     private int size;
 
-    // set finished as false
+    // set ended as false
     Boolean ended = false;
 
     // Game constructor
-    public Game(int size) {
-        this.size = size;
+    public Game() {
+        this.size = 10;
         this.board = new Board(this.size);
     }
 
     // play function
     public void play() {
-        initializePlayer();
+        chooseStartingPlayer();
         while (!this.ended) {
             this.switchPlayer();
         }
     }
 
     // initialize first player
-    public void initializePlayer(){
-
+    public void chooseStartingPlayer(){
 
         //this.currentPlayer = player;
         System.out.println("Initialized player:");

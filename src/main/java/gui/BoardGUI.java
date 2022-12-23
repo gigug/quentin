@@ -95,9 +95,10 @@ public class BoardGUI {
         playerSelectionWindow newPlayerSelectionWindow = new playerSelectionWindow();
         this.gameFrame.add(newPlayerSelectionWindow);
     }
-    private class playerSelectionWindow extends JPanel{
+
+    private class playerSelectionWindow extends JWindow{
         playerSelectionWindow(){
-            super(new GridBagLayout());
+            super();
 
             JButton blackPlayerButton = new JButton("Black");
             JButton whitePlayerButton = new JButton("White");
