@@ -6,70 +6,51 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.border.EmptyBorder;
 
-public class StartGUI extends JFrame{
+import static gui.FunctionsGUI.centerWindow;
 
+public class StartGUI extends JFrame{
+    public CardLayout cards;
+    Container c;
     public StartGUI(){
-        MenuPanel menuPanel = new MenuPanel();
+        c = getContentPane();
+        StartMenuPanel startMenuPanel = new StartMenuPanel();
+        SelectionMenuPanel selectionMenuPanel = new SelectionMenuPanel();
         MenuBar menuBar = new MenuBar();
+
+        cards = new CardLayout();
+        c.setLayout(cards);
+        c.add("start", startMenuPanel);
+        c.add("selection", selectionMenuPanel);
 
         // title and size
         setTitle("Quentin");
         setSize(400, 400);
+        setMinimumSize(new Dimension(300, 300));
 
         // Add table menu bar to screen
         setJMenuBar(menuBar);
 
-        // add JPanel to the JFrame itself
-        getContentPane().add(menuPanel);
-
-        // set layout
-        //setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        // center window
+        centerWindow(this);
 
         // settings window
         setVisible(true);
-        setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
+    private class StartMenuPanel extends JPanel{
 
-    private static class MenuBar extends JMenuBar{
+        public StartMenuPanel(){
+            setBorder(new EmptyBorder(10, 10, 10, 10));
+            setLayout(new GridBagLayout());
 
-        public MenuBar(){
-            final JMenu fileMenu = new JMenu("File");
-
-            final JMenuItem newGameMenuItem = new JMenuItem("New Game");
-            newGameMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("I was clicked!");
-                }
-            });
-            fileMenu.add(newGameMenuItem);
-
-            final JMenuItem exitMenuItem = new JMenuItem("Exit");
-            exitMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
-            fileMenu.add(exitMenuItem);
-
-            this.add(fileMenu);
-        }
-    }
-    private static class MenuPanel extends JPanel{
-
-        public MenuPanel(){
-            Box box = Box.createVerticalBox();
             // start new game
             JButton newGameButton = new JButton("New game");
             newGameButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("I was clicked!");
+                    cards.next(c);
                 }
             });
-            newGameButton.setPreferredSize(new Dimension(100, 30));
 
             // exit game
             JButton exitGameButton = new JButton("Exit game");
@@ -79,20 +60,68 @@ public class StartGUI extends JFrame{
                     System.exit(0);
                 }
             });
-            exitGameButton.setPreferredSize(new Dimension(100, 30));
-
-            // add border to space buttons
-            this.setBorder(new EmptyBorder(new Insets(150, 200, 150, 200)));
 
             // Add button to JPanel
-            //this.add(newGameButton);
-            //this.add(exitGameButton);
+            GridBagConstraints gbc = new GridBagConstraints();
+            // order elements vertically
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-            box.add(newGameButton);
-            box.add(exitGameButton);
+            add(new JLabel("Quentin"), gbc);
 
-            this.add(box);
+            // make buttons the same width
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            JPanel buttons = new JPanel(new GridBagLayout());
+            buttons.add(newGameButton, gbc);
+            buttons.add(exitGameButton, gbc);
+
+            add(buttons, gbc);
+
         }
     }
+
+    private class SelectionMenuPanel extends JPanel{
+
+        public SelectionMenuPanel(){
+            setBorder(new EmptyBorder(10, 10, 10, 10));
+            setLayout(new GridBagLayout());
+
+            // start new game
+            JButton blackButton = new JButton("Black");
+            blackButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    cards.next(c);
+                }
+            });
+
+            // exit game
+            JButton whiteButton = new JButton("White");
+            whiteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    cards.next(c);
+                }
+            });
+
+            // Add button to JPanel
+            GridBagConstraints gbc = new GridBagConstraints();
+            // order elements vertically
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+            add(new JLabel("Select color:"), gbc);
+
+            // make buttons the same width
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            JPanel buttons = new JPanel(new GridBagLayout());
+            buttons.add(blackButton, gbc);
+            buttons.add(whiteButton, gbc);
+
+            add(buttons, gbc);
+
+        }
+    }
+
 }
 
