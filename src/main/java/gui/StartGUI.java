@@ -15,35 +15,38 @@ import static gui.FunctionsGUI.centerWindow;
 public class StartGUI extends JFrame{
 
     public CardLayout cards;
-    Container c;
+    Container contentPane;
 
     // board settings
+    private final Color fontColor = Color.decode("#E1F2FE");
     private final Color backgroundColor = Color.decode("#35012C");
     private final Color boardColor = Color.decode("#815E5B");
     private final Color lineColor = Color.decode("#000000");
     private final Color externalHorizontalLineColor = Color.decode("#000000");
     private final Color externalVerticalLineColor = Color.decode("#FFFFFF");
 
+    public int size;
+
+    private final static Dimension WINDOW_DIMENSION= new Dimension(700, 700);
     // panel width
-    private final static int PANEL_WIDTH = 40;
+    private final static int PANEL_WIDTH = 34;
     private final static Dimension TILE_PANEL_DIMENSION = new Dimension(PANEL_WIDTH, PANEL_WIDTH);
 
-
     public StartGUI(){
-        c = getContentPane();
+
+        contentPane = getContentPane();
         StartMenuPanel startMenuPanel = new StartMenuPanel();
-        BoardPanel boardPanel = new BoardPanel();
+        SelectSizePanel selectSizePanel = new SelectSizePanel();
         MenuBar menuBar = new MenuBar();
 
         cards = new CardLayout();
-        c.setLayout(cards);
-        c.add("start", startMenuPanel);
-        c.add("game", boardPanel);
+        contentPane.setLayout(cards);
+        contentPane.add("startMenuPanel", startMenuPanel);
+        contentPane.add("selectSizePanel", selectSizePanel);
 
         // title and size
         setTitle("Quentin");
-        setSize(400, 400);
-        setMinimumSize(new Dimension(300, 300));
+        setSize(WINDOW_DIMENSION);
 
         // Add table menu bar to screen
         setJMenuBar(menuBar);
@@ -52,21 +55,25 @@ public class StartGUI extends JFrame{
         centerWindow(this);
 
         // settings window
+        setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     private class StartMenuPanel extends JPanel{
-
         public StartMenuPanel(){
+
             setBorder(new EmptyBorder(10, 10, 10, 10));
-            setLayout(new GridBagLayout());
+            GridBagLayout gridBagLayout = new GridBagLayout();
+            setLayout(gridBagLayout);
+
+            setBackground(backgroundColor);
 
             // start new game
             JButton newGameButton = new JButton("New game");
             newGameButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    cards.next(c);
+                    cards.show(contentPane, "selectSizePanel");
                 }
             });
 
@@ -83,251 +90,217 @@ public class StartGUI extends JFrame{
             GridBagConstraints gbc = new GridBagConstraints();
             // order elements vertically
             gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.insets = new Insets(5, 0, 5,0);
 
-            add(new JLabel("Quentin"), gbc);
+            JLabel label = new JLabel("Quentin");
+            label.setFont(new Font("Serif", Font.BOLD, 20));
+            label.setForeground(fontColor);
+
+            add(label, gbc);
 
             // make buttons the same width
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
             JPanel buttons = new JPanel(new GridBagLayout());
+            // using same constraints for buttons
             buttons.add(newGameButton, gbc);
             buttons.add(exitGameButton, gbc);
-
+            buttons.setBackground(backgroundColor);
             add(buttons, gbc);
+        }
+    }
 
+    private class SelectSizePanel extends JPanel{
+        public SelectSizePanel(){
+
+            setBorder(new EmptyBorder(10, 10, 10, 10));
+            GridBagLayout gridBagLayout = new GridBagLayout();
+            setLayout(gridBagLayout);
+
+            setBackground(backgroundColor);
+
+            // start new game
+            JButton size7Button = new JButton("7x7");
+            size7Button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    size = 7;
+                    BoardPanel boardPanel = new BoardPanel();
+                    contentPane.add("boardPanel", boardPanel);
+                    cards.show(contentPane, "boardPanel");
+                }
+            });
+
+            // exit game
+            JButton size9Button = new JButton("9x9");
+            size9Button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    size = 9;
+                    BoardPanel boardPanel = new BoardPanel();
+                    contentPane.add("boardPanel", boardPanel);
+                    cards.show(contentPane, "boardPanel");
+                }
+            });
+
+            JButton size11Button = new JButton("11x11");
+            size11Button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    size = 11;
+                    BoardPanel boardPanel = new BoardPanel();
+                    contentPane.add("boardPanel", boardPanel);
+                    cards.show(contentPane, "boardPanel");
+                }
+            });
+
+            // Add button to JPanel
+            GridBagConstraints gbc = new GridBagConstraints();
+            // order elements vertically
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.insets = new Insets(5, 0, 5,0);
+
+            JLabel label = new JLabel("Select board size:");
+            label.setFont(new Font("Serif", Font.BOLD, 20));
+            label.setForeground(fontColor);
+
+            add(label, gbc);
+
+            // make buttons the same width
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            JPanel buttons = new JPanel(new GridBagLayout());
+            // using same constraints for buttons
+            buttons.add(size7Button, gbc);
+            buttons.add(size9Button, gbc);
+            buttons.add(size11Button, gbc);
+            buttons.setBackground(backgroundColor);
+            add(buttons, gbc);
         }
     }
 
     private class BoardPanel extends JPanel{
-        int size = 10;
         // BoardPanel constructor
         BoardPanel(){
-            super(new GridLayout(10, 10));
-
+            setLayout(new GridBagLayout());
             setBorder(new EmptyBorder(10, 10, 10, 10));
             setBackground(backgroundColor);
 
-            
-            final List<StartGUI.TilePanel> boardTiles = new ArrayList<>();
+            InternalBoardPanel internalBoardPanel = new InternalBoardPanel();
 
-            for(int tileIdY = 0; tileIdY < size; tileIdY++){
-                for(int tileIdX = 0; tileIdX < size; tileIdX++){
-                    final StartGUI.TilePanel tilePanel = new StartGUI.TilePanel(tileIdX, tileIdY);
-                    boardTiles.add(tilePanel);
-                    add(tilePanel);
+            // center panel
+            GridBagConstraints gbc = new GridBagConstraints();
+            // order elements vertically
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.insets = new Insets(5, 0, 5, 0);
+
+            // go back
+            JButton newGameButton = new JButton("New Game");
+            newGameButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    contentPane.remove(2);
+                    cards.show(contentPane, "selectSizePanel");
                 }
+            });
+
+            JLabel label = new JLabel("Game");
+            label.setFont(new Font("Serif", Font.BOLD, 20));
+            label.setForeground(fontColor);
+
+            add(label, gbc);
+            add(internalBoardPanel, gbc);
+            add(newGameButton, gbc);
+        }
+    }
+
+    private class InternalBoardPanel extends JPanel{
+        int board_width;
+        InternalBoardPanel(){
+            final Dimension board_dimension = new Dimension(PANEL_WIDTH * (size + 4), PANEL_WIDTH * (size + 4));
+            board_width = PANEL_WIDTH * (size + 4);
+            setPreferredSize(board_dimension);
+        }
+        @Override
+        protected void paintComponent(Graphics g){
+            Graphics2D g2 = (Graphics2D) g;
+            super.paintComponent(g);
+
+            g.setColor(boardColor);
+            g.fillRect(0,0, board_width, board_width);
+
+            float thicknessBorders = 1;
+            float thicknessExternal = 4;
+            float thicknessInternal = 2;
+
+            int externalReferencePoint = PANEL_WIDTH/2;
+            int internalReferencePoint = 2*PANEL_WIDTH;
+
+            g2.setStroke(new BasicStroke(thicknessBorders));
+            // white lines and triangles
+            g2.setColor(externalVerticalLineColor);
+            g2.fillPolygon(new int[] {0, 0, externalReferencePoint}, new int[] {0, externalReferencePoint, externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {0, 0, externalReferencePoint}, new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {board_width, board_width, board_width - externalReferencePoint}, new int[] {0, externalReferencePoint, externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {board_width, board_width, board_width - externalReferencePoint}, new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {0, externalReferencePoint, externalReferencePoint, 0}, new int[] {externalReferencePoint, externalReferencePoint, board_width - externalReferencePoint, board_width - externalReferencePoint}, 4);
+            g2.fillPolygon(new int[] {board_width - externalReferencePoint, board_width, board_width, board_width - externalReferencePoint}, new int[] {externalReferencePoint, externalReferencePoint, board_width - externalReferencePoint, board_width - externalReferencePoint}, 4);
+
+            // black lines and triangles
+            g2.setColor(externalHorizontalLineColor);
+            g2.fillPolygon(new int[] {0, externalReferencePoint, externalReferencePoint}, new int[] {0, 0, externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {0, externalReferencePoint, externalReferencePoint}, new int[] {board_width, board_width, board_width - externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint}, new int[] {0, 0, externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint}, new int[] {board_width, board_width, board_width - externalReferencePoint}, 3);
+            g2.fillPolygon(new int[] {externalReferencePoint, externalReferencePoint, board_width - externalReferencePoint, board_width - externalReferencePoint}, new int[] {0, externalReferencePoint, externalReferencePoint, 0}, 4);
+            g2.fillPolygon(new int[] {externalReferencePoint, externalReferencePoint, board_width - externalReferencePoint, board_width - externalReferencePoint}, new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint, board_width}, 4);
+
+            // external thick square
+            g2.setColor(lineColor);
+            g2.setStroke(new BasicStroke(thicknessExternal));
+            g2.drawPolygon(new int[] {internalReferencePoint, internalReferencePoint, board_width - internalReferencePoint, board_width - internalReferencePoint}, new int[] {internalReferencePoint, board_width - internalReferencePoint, board_width - internalReferencePoint, internalReferencePoint}, 4);
+
+            // internal lines
+            g2.setStroke(new BasicStroke(thicknessInternal));
+
+            // vertical lines
+            for (int i = 3; i < size + 2; i++) {
+                g2.drawLine(internalReferencePoint, PANEL_WIDTH * i, board_width - internalReferencePoint, PANEL_WIDTH * i);
             }
 
-            validate();
+            // horizontal lines
+            for (int i = 3; i < size + 2; i++) {
+                g2.drawLine(PANEL_WIDTH * i, internalReferencePoint, PANEL_WIDTH * i, board_width - internalReferencePoint);
+            }
 
         }
     }
 
+    private class MenuBar extends JMenuBar {
 
-    private class TilePanel extends JPanel {
-        private final int tileIdX;
-        private final int tileIdY;
+        public MenuBar(){
+            final JMenu fileMenu = new JMenu("File");
 
-        int size = 10;
-        TilePanel(final int tileIdX, final int tileIdY){
-            super(new GridBagLayout());
-            this.tileIdX = tileIdX;
-            this.tileIdY = tileIdY;
+            final JMenuItem newGameMenuItem = new JMenuItem("New Game");
+            newGameMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    cards.show(contentPane, "selectSizePanel");
+                }
+            });
+            fileMenu.add(newGameMenuItem);
 
-            setPreferredSize(TILE_PANEL_DIMENSION);
-            validate();
+            final JMenuItem exitMenuItem = new JMenuItem("Exit");
+            exitMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+            fileMenu.add(exitMenuItem);
+
+            this.add(fileMenu);
         }
-        @Override
-        protected void paintComponent(Graphics g) {
-            // down-casting graphic component to set stroke
-            Graphics2D g2 = (Graphics2D) g;
-            super.paintComponent(g);
-
-            //xy pass everything to g2?
-            // draw the rectangle here
-            g.setColor(boardColor);
-            g.fillRect(0, 0, 100, 100);
-
-            // defining line ranges
-            int hX1, hY1, hX2, hY2;
-            int vX1, vY1, vX2, vY2;
-
-            // defining line thickness
-            float thickness1;
-            float thickness2;
-            float thicknessExternal = 20;
-
-            // xy reorganize this as nested ifs to reduce boilerplate
-            if (this.tileIdX == 0 && this.tileIdY == 0){ // upper-left
-                thickness1 = 4;
-                thickness2 = 4;
-                vX1 = 20;
-                vY1 = 20;
-                vX2 = 20;
-                vY2 = 40;
-
-                hX1 = 20;
-                hY1 = 20;
-                hX2 = 40;
-                hY2 = 20;
-
-                g2.setColor(externalHorizontalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 0, 40, 0);
-
-                g2.setColor(externalVerticalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 0, 0, 40);
-            } else if (this.tileIdX == (size - 1) && this.tileIdY == 0) { // upper-right
-                thickness1 = 4;
-                thickness2 = 4;
-                vX1 = 20;
-                vY1 = 20;
-                vX2 = 20;
-                vY2 = 40;
-
-                hX1 = 0;
-                hY1 = 20;
-                hX2 = 20;
-                hY2 = 20;
-
-                g2.setColor(externalHorizontalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 0, 40, 0);
-
-                g2.setColor(externalVerticalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(40, 0, 40, 40);
-            } else if (this.tileIdX == 0 && this.tileIdY == (size - 1)) { // lower-left
-                thickness1 = 4;
-                thickness2 = 4;
-                vX1 = 20;
-                vY1 = 20;
-                vX2 = 40;
-                vY2 = 20;
-
-                hX1 = 20;
-                hY1 = 0;
-                hX2 = 20;
-                hY2 = 20;
-
-                g2.setColor(externalHorizontalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 40, 40, 40);
-
-                g2.setColor(externalVerticalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 0, 0, 40);
-            } else if (this.tileIdX == (size - 1) && this.tileIdY == (size - 1)) { // lower-right
-                thickness1 = 4;
-                thickness2 = 4;
-                vX1 = 20;
-                vY1 = 0;
-                vX2 = 20;
-                vY2 = 20;
-
-                hX1 = 20;
-                hY1 = 20;
-                hX2 = 0;
-                hY2 = 20;
-
-                g2.setColor(externalHorizontalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 40, 40, 40);
-
-                g2.setColor(externalVerticalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(40, 0, 40, 40);
-            } else if (this.tileIdX > 0 && this.tileIdX < (size - 1) && this.tileIdY == 0){ // upper flank
-                thickness1 = 4;
-                thickness2 = 2;
-                vX1 = 20;
-                vY1 = 20;
-                vX2 = 20;
-                vY2 = 40;
-
-                hX1 = 0;
-                hY1 = 20;
-                hX2 = 40;
-                hY2 = 20;
-
-                g2.setColor(externalHorizontalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 0, 40, 0);
-            } else if (this.tileIdX == 0 && this.tileIdY > 0 && this.tileIdY < (size - 1)){ // left flank
-                thickness1 = 2;
-                thickness2 = 4;
-                vX1 = 20;
-                vY1 = 0;
-                vX2 = 20;
-                vY2 = 40;
-
-                hX1 = 20;
-                hY1 = 20;
-                hX2 = 40;
-                hY2 = 20;
-
-                g2.setColor(externalVerticalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 0, 0, 40);
-            } else if (this.tileIdX == (size - 1) && this.tileIdY > 0 && this.tileIdY < (size - 1)){ // right flank
-                thickness1 = 2;
-                thickness2 = 4;
-                vX1 = 20;
-                vY1 = 0;
-                vX2 = 20;
-                vY2 = 40;
-
-                hX1 = 0;
-                hY1 = 20;
-                hX2 = 20;
-                hY2 = 20;
-
-                g2.setColor(externalVerticalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(40, 0, 40, 40);
-            } else if (this.tileIdX > 0 && this.tileIdX < (size - 1) && this.tileIdY == (size - 1)){ // lower flank
-                thickness1 = 4;
-                thickness2 = 2;
-                vX1 = 20;
-                vY1 = 0;
-                vX2 = 20;
-                vY2 = 20;
-
-                hX1 = 0;
-                hY1 = 20;
-                hX2 = 40;
-                hY2 = 20;
-
-                g2.setColor(externalHorizontalLineColor);
-                g2.setStroke(new BasicStroke(thicknessExternal));
-                g2.drawLine(0, 40, 40, 40);
-            } else {
-                thickness1 = 2;
-                thickness2 = 2;
-
-                vX1 = 20;
-                vY1 = 0;
-                vX2 = 20;
-                vY2 = 40;
-
-                hX1 = 0;
-                hY1 = 20;
-                hX2 = 40;
-                hY2 = 20;
-
-            }
-
-            g2.setColor(lineColor);
-
-            g2.setStroke(new BasicStroke(thickness1));
-            g2.drawLine(hX1, hY1, hX2, hY2);
-            g2.setStroke(new BasicStroke(thickness2));
-            g2.drawLine(vX1, vY1, vX2, vY2);
-        }
-/*
- */
-
     }
 
 
