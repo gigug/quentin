@@ -1,19 +1,20 @@
 package gui;
 
 import objects.Board;
+import screens.Game;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.MouseEvent;
 import javax.swing.border.EmptyBorder;
 
 import static gui.FunctionsGUI.centerWindow;
 
 public class StartGUI extends JFrame{
 
+    public Game game;
     public CardLayout cards;
     Container contentPane;
 
@@ -21,11 +22,11 @@ public class StartGUI extends JFrame{
     private final Color fontColor = Color.decode("#E1F2FE");
     private final Color backgroundColor = Color.decode("#35012C");
     private final Color boardColor = Color.decode("#815E5B");
-    private final Color lineColor = Color.decode("#000000");
-    private final Color externalHorizontalLineColor = Color.decode("#000000");
-    private final Color externalVerticalLineColor = Color.decode("#FFFFFF");
 
     public int size;
+
+    int hoveredRow = -1;
+    int hoveredCol = -1;
 
     private final static Dimension WINDOW_DIMENSION= new Dimension(700, 700);
     // panel width
@@ -59,6 +60,7 @@ public class StartGUI extends JFrame{
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
+
     private class StartMenuPanel extends JPanel{
         public StartMenuPanel(){
 
@@ -119,27 +121,21 @@ public class StartGUI extends JFrame{
 
             setBackground(backgroundColor);
 
-            // start new game
             JButton size7Button = new JButton("7x7");
             size7Button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     size = 7;
-                    BoardPanel boardPanel = new BoardPanel();
-                    contentPane.add("boardPanel", boardPanel);
-                    cards.show(contentPane, "boardPanel");
+                    initializeGame(size);
                 }
             });
 
-            // exit game
             JButton size9Button = new JButton("9x9");
             size9Button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     size = 9;
-                    BoardPanel boardPanel = new BoardPanel();
-                    contentPane.add("boardPanel", boardPanel);
-                    cards.show(contentPane, "boardPanel");
+                    initializeGame(size);
                 }
             });
 
@@ -148,9 +144,7 @@ public class StartGUI extends JFrame{
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     size = 11;
-                    BoardPanel boardPanel = new BoardPanel();
-                    contentPane.add("boardPanel", boardPanel);
-                    cards.show(contentPane, "boardPanel");
+                    initializeGame(size);
                 }
             });
 
@@ -181,7 +175,7 @@ public class StartGUI extends JFrame{
 
     private class BoardPanel extends JPanel{
         // BoardPanel constructor
-        BoardPanel(){
+        BoardPanel(boolean pieRule){
             setLayout(new GridBagLayout());
             setBorder(new EmptyBorder(10, 10, 10, 10));
             setBackground(backgroundColor);
@@ -211,15 +205,53 @@ public class StartGUI extends JFrame{
             add(label, gbc);
             add(internalBoardPanel, gbc);
             add(newGameButton, gbc);
+
+            if (pieRule){
+                JButton pieRuleButton = new JButton("Switch sides");
+                pieRuleButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        outerloop:
+                        for(int i = 0; i <= size; i++) {
+                            for (int j = 0; j <= size; j++) {
+                                if (game.getPiece(i,j) == 1) {
+                                    game.changePiecePieRule(i,j);
+                                    break outerloop;
+                                }
+                            }
+                        }
+                        game.switchPlayer();
+                        createGameCard(false);
+                    }
+                });
+                add(pieRuleButton, gbc);
+            }
         }
     }
 
     private class InternalBoardPanel extends JPanel{
         int board_width;
+        final Dimension boardDimension;
         InternalBoardPanel(){
-            final Dimension board_dimension = new Dimension(PANEL_WIDTH * (size + 4), PANEL_WIDTH * (size + 4));
+            setLayout(new GridBagLayout());
+
+            boardDimension = new Dimension(PANEL_WIDTH * (size + 4), PANEL_WIDTH * (size + 4));
             board_width = PANEL_WIDTH * (size + 4);
-            setPreferredSize(board_dimension);
+
+            setPreferredSize(boardDimension);
+
+            // center panel
+            GridBagConstraints gbc = new GridBagConstraints();
+            // order elements vertically
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+            // make buttons the same width
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            ClickablePanel clickablePanel = new ClickablePanel();
+
+            add(clickablePanel, gbc);
+
         }
         @Override
         protected void paintComponent(Graphics g){
@@ -238,7 +270,7 @@ public class StartGUI extends JFrame{
 
             g2.setStroke(new BasicStroke(thicknessBorders));
             // white lines and triangles
-            g2.setColor(externalVerticalLineColor);
+            g2.setColor(Color.WHITE);
             g2.fillPolygon(new int[] {0, 0, externalReferencePoint}, new int[] {0, externalReferencePoint, externalReferencePoint}, 3);
             g2.fillPolygon(new int[] {0, 0, externalReferencePoint}, new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint}, 3);
             g2.fillPolygon(new int[] {board_width, board_width, board_width - externalReferencePoint}, new int[] {0, externalReferencePoint, externalReferencePoint}, 3);
@@ -247,7 +279,7 @@ public class StartGUI extends JFrame{
             g2.fillPolygon(new int[] {board_width - externalReferencePoint, board_width, board_width, board_width - externalReferencePoint}, new int[] {externalReferencePoint, externalReferencePoint, board_width - externalReferencePoint, board_width - externalReferencePoint}, 4);
 
             // black lines and triangles
-            g2.setColor(externalHorizontalLineColor);
+            g2.setColor(Color.BLACK);
             g2.fillPolygon(new int[] {0, externalReferencePoint, externalReferencePoint}, new int[] {0, 0, externalReferencePoint}, 3);
             g2.fillPolygon(new int[] {0, externalReferencePoint, externalReferencePoint}, new int[] {board_width, board_width, board_width - externalReferencePoint}, 3);
             g2.fillPolygon(new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint}, new int[] {0, 0, externalReferencePoint}, 3);
@@ -256,7 +288,7 @@ public class StartGUI extends JFrame{
             g2.fillPolygon(new int[] {externalReferencePoint, externalReferencePoint, board_width - externalReferencePoint, board_width - externalReferencePoint}, new int[] {board_width, board_width - externalReferencePoint, board_width - externalReferencePoint, board_width}, 4);
 
             // external thick square
-            g2.setColor(lineColor);
+            g2.setColor(Color.BLACK);
             g2.setStroke(new BasicStroke(thicknessExternal));
             g2.drawPolygon(new int[] {internalReferencePoint, internalReferencePoint, board_width - internalReferencePoint, board_width - internalReferencePoint}, new int[] {internalReferencePoint, board_width - internalReferencePoint, board_width - internalReferencePoint, internalReferencePoint}, 4);
 
@@ -273,6 +305,101 @@ public class StartGUI extends JFrame{
                 g2.drawLine(PANEL_WIDTH * i, internalReferencePoint, PANEL_WIDTH * i, board_width - internalReferencePoint);
             }
 
+            // pawns
+            for(int i = 0; i <= size; i++) {
+                for (int j = 0; j <= size; j++) {
+                    if (game.board.grid[i][j] == 1) {
+                        g2.setColor(Color.BLACK);
+                        g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
+                        }
+                    if (game.board.grid[i][j] == 2) {
+                        g2.setColor(Color.WHITE);
+                        g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
+                        }
+                }
+            }
+
+        }
+    }
+
+    private class ClickablePanel extends JPanel{
+        final Dimension internalBoardDimension;
+        ClickablePanel(){
+            setLayout(new GridLayout(size + 1, size + 1));
+            setOpaque(false);
+
+            internalBoardDimension = new Dimension(PANEL_WIDTH * (size + 1), PANEL_WIDTH * (size + 1));
+
+            setPreferredSize(internalBoardDimension);
+
+            // Create an array to hold the chessboard squares
+            JButton[][] squares = new JButton[size + 1][size + 1];
+
+            // Create a button for each square and add it to the panel
+            for (int row = 0; row < (size + 1); row++) {
+                for (int col = 0; col < (size + 1); col++) {
+                    JButton button = new JButton();
+                    squares[row][col] = button;
+                    add(button);
+
+                    // Set the button to be transparent
+                    button.setOpaque(false);
+                    button.setContentAreaFilled(false);
+                    button.setBorderPainted(false);
+
+                    // Add an ActionListener to the button to handle clicks
+                    int finalRow = row;
+                    int finalCol = col;
+                    button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+
+                            if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
+                                game.addPiece(finalCol, finalRow);
+                                game.progress();
+                            }
+                            if (game.getTurn() == 2){
+                                createGameCard(true);
+                            }
+                            if (game.getTurn() == 3){
+                                createGameCard(false);
+                            }
+                        }
+                    });
+                    button.addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            // Set the hoveredRow and hoveredCol variables when the mouse enters the button
+                            hoveredRow = finalRow;
+                            hoveredCol = finalCol;
+                            repaint();
+                        }
+
+                        public void mouseExited(java.awt.event.MouseEvent evt) {
+                            hoveredRow = -1;
+                            hoveredCol = -1;
+                            repaint();
+                        }
+                    });
+                }
+
+            }
+
+        }
+        @Override
+        protected void paintComponent(Graphics g){
+            Graphics2D g2 = (Graphics2D) g;
+            super.paintComponent(g);
+
+            if (hoveredCol > -1) {
+                if ((game.checkEmpty(hoveredCol, hoveredRow)) && (game.checkDiagonal(hoveredCol, hoveredRow))){
+                    g2.setColor(Color.GREEN);
+                }
+                else {
+                    g2.setColor(Color.RED);
+                }
+                g2.fillOval(PANEL_WIDTH * hoveredCol, PANEL_WIDTH * hoveredRow, PANEL_WIDTH, PANEL_WIDTH);
+            }
         }
     }
 
@@ -303,6 +430,16 @@ public class StartGUI extends JFrame{
         }
     }
 
+    private void initializeGame(int size){
+        game = new Game(size);
+        createGameCard(false);
+    }
+
+    private void createGameCard(boolean pieRule){
+        BoardPanel boardPanel = new BoardPanel(pieRule);
+        contentPane.add("boardPanel", boardPanel);
+        cards.show(contentPane, "boardPanel");
+    }
 
 }
 

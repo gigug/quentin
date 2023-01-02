@@ -9,7 +9,9 @@ public class Board {
     public int[][] grid;
 
     public Board(int size){
-        this.size = size;
+        // size indicates the number of squares per axis
+        // size + 1 indicates the number of intersections where to place pawns
+        this.size = size + 1;
         this.grid = new int[this.size][this.size];
         this.initializeGrid();
     }
