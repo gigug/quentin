@@ -9,9 +9,9 @@ public class Board {
     public int[][] grid;
 
     public Board(int size){
-        // size indicates the number of squares per axis
-        // size + 1 indicates the number of intersections where to place pawns
-        this.size = size + 1;
+
+        // size indicates the number of intersections where to place pawns
+        this.size = size;
         this.grid = new int[this.size][this.size];
         this.initializeGrid();
     }
@@ -23,8 +23,8 @@ public class Board {
     }
 
     public void viewGrid(){
-        for(int i=0; i<this.size; i++){
-            for(int j=0; j<this.size; j++){
+        for(int i=0; i < this.size; i++){
+            for(int j=0; j < this.size; j++){
                 System.out.print(String.format("%2s", this.grid[i][j]));
             }
             System.out.println("");
