@@ -6,6 +6,7 @@ import players.PlayerWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Game {
@@ -22,6 +23,12 @@ public class Game {
     // size is the number of intersections where to place pawns (= number of tiles + 1)
     private final int size;
 
+    List<List<int[]>> neighborsOccupiedList = new ArrayList<>();
+    List<List<int[]>> neighborsEmptyList = new ArrayList<>();
+    List<List<int[]>> regions = new ArrayList<>();
+    List<List<int[]>> territories = new ArrayList<>();
+    List<Integer> territoriesColors = new ArrayList<>();
+
     // Game constructor
     public Game(int size) {
         this.size = size;
@@ -31,13 +38,14 @@ public class Game {
         this.currentPlayer = new PlayerWrapper(blackPlayer);
     }
 
-    public int currentPlayer(){return currentPlayer.getSide();}
-    
+    public int currentPlayer() {
+        return currentPlayer.getSide();
+    }
+
     public void switchPlayer() {
-        if (currentPlayer.getSide() == 1){
+        if (currentPlayer.getSide() == 1) {
             currentPlayer = new PlayerWrapper(whitePlayer);
-        }
-        else{
+        } else {
             currentPlayer = new PlayerWrapper(blackPlayer);
         }
     }
@@ -48,7 +56,7 @@ public class Game {
 
     public boolean checkEmpty(int posX, int posY) {
         // if in grid, check empty
-        if (checkInGrid(posX, posY)){
+        if (checkInGrid(posX, posY)) {
             return this.board.grid[posX][posY] == 0;
         }
 
@@ -58,7 +66,7 @@ public class Game {
 
     public boolean checkDiagonal(int posX, int posY) {
         // check if any same-colored tiles are diagonally adjacent
-        int[][] directions = new int[][]{{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+        int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
 
         int newPosX;
         int newPosY;
@@ -73,7 +81,7 @@ public class Game {
             newPosY = posY + directions[i][1];
 
             // check orthogonally adjacent positions
-            if (getPiece(newPosX, newPosY) == currentPlayer()){
+            if (getPiece(newPosX, newPosY) == currentPlayer()) {
                 if (checkInGrid(newPosX, newPosY)) {
                     if (getPiece(newPosX, posY) == currentPlayer() || getPiece(posX, newPosY) == currentPlayer()) {
                         valid = true;
@@ -85,7 +93,7 @@ public class Game {
 
         }
         // if no diagonally adjacent neighbors share the color, move is leaal
-        if (allDifferent){
+        if (allDifferent) {
             return true;
         }
 
@@ -93,12 +101,12 @@ public class Game {
         return valid;
     }
 
-    public boolean checkPassable(){
+    public boolean checkPassable() {
         boolean passable = true;
 
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
-                if (checkDiagonal(i, j) && checkEmpty(i, j)){
+                if (checkDiagonal(i, j) && checkEmpty(i, j)) {
                     passable = false;
                 }
             }
@@ -107,133 +115,140 @@ public class Game {
         return passable;
     }
 
-    public void checkTerritory() {
-        // loop grid and sign positives
+    public void findRegions() {
+
+        boolean[][] visited = new boolean[this.size][this.size];
+        this.regions = new ArrayList<>();
+
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
-
+                if (checkEmpty(i, j) && !visited[i][j]) {
+                    // start a new region
+                    List<int[]> region = new ArrayList<>();
+                    exploreRegion(i, j, visited, region);
+                    this.regions.add(region);
+                }
             }
         }
     }
 
-
-    public boolean checkInTerritory(int posX, int posY, boolean starting, boolean[][] visited){
-
-        if (starting){
-            visited = new boolean[this.size][this.size];
-            for(int i = 0; i < this.size; i++)
-                for(int j = 0; j < this.size; j++)
-                    visited[i][j] = false;
-            starting = false;
+    private void exploreRegion(int posX, int posY, boolean[][] visited, List<int[]> region) {
+        // base case: out of bounds or not an empty tile
+        if (!checkEmpty(posX, posY) || !checkInGrid(posX, posY)){
+            return;
         }
 
-        // initialize directions
-        int[][] directions = new int[][]{{0, 1}, {1, 0}};
+        // mark the current tile as visited
+        visited[posX][posY] = true;
 
-        if (checkInGrid(posX, posY)){
-            visited[posX][posY] = true;
-        }
+        // add the current tile to the region
+        region.add(new int[] {posX, posY});
 
-        for (int i = 0; i < 2; i++) {
-            // position to check
-            int newPosX = posX + directions[i][0];
-            int newPosY = posY + directions[i][1];
-
-            if (checkInGrid(newPosX, newPosY)){
-                if (checkEmpty(newPosX, newPosY)){
-                    if (!visited[newPosX][newPosY]){
-                        return checkInTerritory(newPosX, newPosY, false, visited);
-                    }
-                }
-            }
-            else{
-                return true;
-            }
-
-        }
-
-        int[][] fullDirections = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
-
-        boolean end = true;
-
-        for (int i = 0; i < 4; i++){
-            // position to check
-            int newPosX = posX + directions[i][0];
-            int newPosY = posY + directions[i][1];
-
-            if (!visited[newPosX][newPosY]  || checkEmpty(newPosX, newPosY)){
-                end = false;
-            }
-        }
-
-        return end;
-    }
-
-    public void findTerritories(){
-
-        List<List<int[]>> possibleInTerritory = new ArrayList<>();
-        for (int i = 0; i < this.size; i++){
-            for (int j = 0; j < this.size; j++){
-                possibleInTerritory.add(j + this.size * i, checkEligible(i, j));
-            }
-        }
-
-        for(int i = 0; i < this.size; i++){
-            for(int j = 0; j < this.size; j++){
-                List<int[]> neighbors = possibleInTerritory.get(i + this.size * j);
-                if (neighbors.size() == 0){
-                    System.out.print(String.format("[None]"));
-                }
-                else{
-                    System.out.print(String.format("["));
-                    for (int[] neighbor : neighbors) {
-                        System.out.print(String.format("(%2s,  %2s)", neighbor[0], neighbor[1]));
-                    }
-                    System.out.print(String.format("]"));
-                }
-            }
-            System.out.println("");
-        }
-
-        // function to mark territories
-        // ... something recursive
-
-        // function to color territories
-        // ... something that checks surroundings
-
-
-
-    }
-
-
-    public List<int[]> checkEligible(int posX, int posY) {
-
-        // instead of returning boolean, you can return list of adjacent colored blocks
-        List<int[]> adjacents = new ArrayList<int[]>();
-
-        if (!checkEmpty(posX, posY)){
-            return adjacents;
-        }
-
-        // initialize directions
         int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
 
-        int counter = 0;
-        // loop over directions
-        for (int i = 0; i < 4; i++) {
+        for (int dir = 0; dir < 4; dir++){
 
-            // position to check
-            int newPosX = posX + directions[i][0];
-            int newPosY = posY + directions[i][1];
+            int newPosX = posX + directions[dir][0];
+            int newPosY = posY + directions[dir][1];
 
+            // explore empty regions
             if (checkInGrid(newPosX, newPosY)){
-                if (!checkEmpty(newPosX, newPosY)) {
-                    adjacents.add(counter, new int[] {newPosX, newPosY});
-                    counter += 1;
+                if (!visited[newPosX][newPosY]){
+                    exploreRegion(newPosX, newPosY, visited, region);
                 }
             }
         }
-        return adjacents;
+    }
+
+    public void validateTerritories(){
+
+        int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+
+        for(List<int[]> region: this.regions){
+
+            // indicates if region is territory
+            boolean valid = true;
+            for(int[] element: region){
+
+                int neighbors = 0;
+                for(int dir = 0; dir < 4; dir ++) {
+                    int newPosX = element[0] + this.size * directions[dir][0];
+                    int newPosY = element[1] + this.size * directions[dir][1];
+
+                    if (checkInGrid(newPosX, newPosY) && !checkEmpty(newPosX, newPosY)){
+                        neighbors += 1;
+                    }
+                }
+                if (neighbors < 2){
+                    valid = false;
+                    break;
+                }
+            }
+
+            // promote region to territory
+            if (valid){
+                territories.add(region);
+            }
+        }
+    }
+
+    public void findTerritoriesColor(){
+
+        int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+
+        for(List<int[]> territory: this.territories){
+
+            List<int[]> listOccupiedNeighbors = new ArrayList<>();
+
+            for(int[] element: territory){
+                for(int dir = 0; dir < 4; dir ++){
+                    int newPosX = element[0] + this.size * directions[dir][0];
+                    int newPosY = element[1] + this.size * directions[dir][1];
+
+                    if (!checkEmpty(newPosX, newPosY)){
+
+                        boolean found = false;
+                        for(int[] neighbor: listOccupiedNeighbors){
+                            if (Objects.equals(neighbor, new int[]{newPosX, newPosY})){
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found){
+                            listOccupiedNeighbors.add(new int[] {newPosX, newPosY});
+                        }
+                    }
+                }
+            }
+
+            colorTerritory(listOccupiedNeighbors);
+        }
+    }
+
+    
+
+    public void colorTerritory(List<int[]> listOccupiedNeighbors){
+
+        int blackCounter = 0;
+        int whiteCounter = 0;
+
+        for (int[] neighbor: listOccupiedNeighbors){
+            if (getPiece(neighbor[0], neighbor[1]) == 1){
+                blackCounter += 1;
+            }
+            else{
+                whiteCounter += 1;
+            }
+        }
+
+        if (blackCounter > whiteCounter){
+            territoriesColors.add(1);
+        } else if (whiteCounter > blackCounter) {
+            territoriesColors.add(2);
+        }
+        else{
+            territoriesColors.add(0);
+        }
     }
 
     public int getPiece(int tileIdX, int tileIdY){
@@ -274,9 +289,12 @@ public class Game {
 
     public void progress(){
         increaseTurn();
+        findRegions();
+        validateTerritories();
+        findTerritoriesColor();
+        printoneeeee();
         //checkFill();
         //checkWin();
         switchPlayer();
-        findTerritories();
     }
 }
