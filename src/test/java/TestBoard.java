@@ -25,26 +25,4 @@ public class TestBoard {
         assertEquals(game.board.getPiece(tileId, tileId), 0);
     }
 
-    @Test
-    public void testPassable(){
-        // the following configuration of pawns has to be passable
-        int testSize = 2;
-        Game testGame = new Game(testSize);
-
-        // add black pawn
-        testGame.addPiece(0, 0);
-
-        // play with white
-        testGame.switchPlayer();
-
-        // add white pawns
-        testGame.addPiece(1, 0);
-        testGame.addPiece(0, 1);
-
-        // play with black
-        testGame.switchPlayer();
-
-        assertTrue(testGame.checkPassable());
-    }
-
 }

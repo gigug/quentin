@@ -1,6 +1,5 @@
 package gui;
 
-import objects.Board;
 import screens.Game;
 
 import javax.swing.*;
@@ -8,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import javax.swing.border.EmptyBorder;
 
 import static gui.FunctionsGUI.centerWindow;
@@ -19,6 +19,8 @@ public class StartGUI extends JFrame{
     Container contentPane;
 
     // board settings
+    private final Font fontBig = new Font("monospaced", Font.BOLD, 40);
+    private final Font fontSmall = new Font("monospaced", Font.BOLD, 20);
     private final Color fontColor = Color.decode("#E1F2FE");
     private final Color backgroundColor = Color.decode("#35012C");
     private final Color boardColor = Color.decode("#815E5B");
@@ -30,21 +32,31 @@ public class StartGUI extends JFrame{
     int hoveredCol = -1;
 
     private final static Dimension WINDOW_DIMENSION= new Dimension(700, 700);
+    private final static int DIAMETER_ICON = 34;
     // panel width
     private final static int PANEL_WIDTH = 34;
     private final static Dimension TILE_PANEL_DIMENSION = new Dimension(PANEL_WIDTH, PANEL_WIDTH);
 
+    // panels
+    StartMenuPanel startMenuPanel;
+    SelectSizePanel selectSizePanel;
+    BoardPanel boardPanel;
+    InternalBoardPanel internalBoardPanel;
+    UnclickablePanel unclickablePanel;
+    ClickablePanel clickablePanel;
+    MenuBar menuBar;
+
     public StartGUI(){
 
         contentPane = getContentPane();
-        StartMenuPanel startMenuPanel = new StartMenuPanel();
-        SelectSizePanel selectSizePanel = new SelectSizePanel();
-        MenuBar menuBar = new MenuBar();
+        this.startMenuPanel = new StartMenuPanel();
+        this.selectSizePanel = new SelectSizePanel();
+        this.menuBar = new MenuBar();
 
         cards = new CardLayout();
         contentPane.setLayout(cards);
-        contentPane.add("startMenuPanel", startMenuPanel);
-        contentPane.add("selectSizePanel", selectSizePanel);
+        contentPane.add("startMenuPanel", this.startMenuPanel);
+        contentPane.add("selectSizePanel", this.selectSizePanel);
 
         // title and size
         setTitle("Quentin");
@@ -72,7 +84,8 @@ public class StartGUI extends JFrame{
             setBackground(backgroundColor);
 
             // start new game
-            JButton newGameButton = new JButton("New game");
+            BlackButton newGameButton = new BlackButton("New game");
+            newGameButton.setFont(fontSmall);
             newGameButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -81,7 +94,8 @@ public class StartGUI extends JFrame{
             });
 
             // exit game
-            JButton exitGameButton = new JButton("Exit game");
+            BlackButton exitGameButton = new BlackButton("Exit game");
+            exitGameButton.setFont(fontSmall);
             exitGameButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -96,7 +110,7 @@ public class StartGUI extends JFrame{
             gbc.insets = new Insets(5, 0, 5,0);
 
             JLabel label = new JLabel("Quentin");
-            label.setFont(new Font("Serif", Font.BOLD, 20));
+            label.setFont(fontBig);
             label.setForeground(fontColor);
 
             add(label, gbc);
@@ -122,17 +136,19 @@ public class StartGUI extends JFrame{
 
             setBackground(backgroundColor);
 
-            JButton size7Button = new JButton("7x7");
+            BlackButton size7Button = new BlackButton("7x7");
+            size7Button.setFont(fontSmall);
             size7Button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    numberTiles = 7;
+                    numberTiles = 2;
                     size = numberTiles + 1;
                     initializeGame(size);
                 }
             });
 
-            JButton size9Button = new JButton("9x9");
+            BlackButton size9Button = new BlackButton("9x9");
+            size9Button.setFont(fontSmall);
             size9Button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -142,7 +158,8 @@ public class StartGUI extends JFrame{
                 }
             });
 
-            JButton size11Button = new JButton("11x11");
+            BlackButton size11Button = new BlackButton("11x11");
+            size11Button.setFont(fontSmall);
             size11Button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -159,7 +176,7 @@ public class StartGUI extends JFrame{
             gbc.insets = new Insets(5, 0, 5,0);
 
             JLabel label = new JLabel("Select board size:");
-            label.setFont(new Font("Serif", Font.BOLD, 20));
+            label.setFont(fontBig);
             label.setForeground(fontColor);
 
             add(label, gbc);
@@ -178,13 +195,22 @@ public class StartGUI extends JFrame{
     }
 
     private class BoardPanel extends JPanel{
+        JPanel turnPanel = new JPanel();
+        JLabel circleLabel = new JLabel();
+        JLabel turnLabel = new JLabel();
+
         // BoardPanel constructor
-        BoardPanel(boolean pieRule, boolean passable){
+        BoardPanel(){
+
+            turnPanel.setOpaque(false);
+            turnLabel.setFont(fontBig);
+            turnLabel.setForeground(fontColor);
+
             setLayout(new GridBagLayout());
             setBorder(new EmptyBorder(10, 10, 10, 10));
             setBackground(backgroundColor);
 
-            InternalBoardPanel internalBoardPanel = new InternalBoardPanel();
+            internalBoardPanel = new InternalBoardPanel();
 
             // center panel
             GridBagConstraints gbc = new GridBagConstraints();
@@ -193,7 +219,8 @@ public class StartGUI extends JFrame{
             gbc.insets = new Insets(5, 0, 5, 0);
 
             // go back
-            JButton newGameButton = new JButton("New Game");
+            BlackButton newGameButton = new BlackButton("New Game");
+            newGameButton.setFont(fontSmall);
             newGameButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -202,37 +229,83 @@ public class StartGUI extends JFrame{
                 }
             });
 
-            JLabel label = new JLabel("Game");
-            label.setFont(new Font("Serif", Font.BOLD, 20));
-            label.setForeground(fontColor);
+            turnPanel.add(turnLabel);
+            turnPanel.add(circleLabel);
 
-            add(label, gbc);
+            setTurnLabel();
+
+            add(turnPanel, gbc);
             add(internalBoardPanel, gbc);
-            add(newGameButton, gbc);
 
-            if (pieRule){
-                JButton pieRuleButton = new JButton("Switch sides");
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setBackground(backgroundColor);
+            buttonPanel.add(newGameButton);
+
+            if (game.getTurn() == 1){
+                BlackButton pieRuleButton = new BlackButton("Switch sides");
+                pieRuleButton.setFont(fontSmall);
                 pieRuleButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         game.changePiecePieRule();
-                        createGameCard(false, false);
+                        createGameCard();
                     }
                 });
-                add(pieRuleButton, gbc);
+                buttonPanel.add(pieRuleButton);
             }
 
-            if (passable){
-                JButton passableButton = new JButton("Pass");
+            if (game.checkPassable() && !game.finished){
+                BlackButton passableButton = new BlackButton("Pass");
+                passableButton.setFont(fontSmall);
                 passableButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         game.switchPlayer();
-                        createGameCard(false, false);
+                        createGameCard();
                     }
                 });
-                add(passableButton, gbc);
+                buttonPanel.add(passableButton);
             }
+
+            add(buttonPanel, gbc);
+        }
+
+        public void setTurnLabel() {
+            String text;
+            Color circleColor;
+            BufferedImage circleImage;
+            ImageIcon circleIcon;
+
+            if (game.finished){
+                if (game.getWinner() == 0){
+                    text = "Tie!";
+                    circleColor = Color.BLUE;
+                }
+                else{
+                    text = (game.getWinner() == 1) ? "Winner: black":"Winner: white";
+                    circleColor = (game.getWinner() == 1) ? Color.BLACK:Color.WHITE;
+                }
+
+            }
+            else{
+                text = (game.getCurrentPlayer() == 1) ? "Turn: black":"Turn: white";
+                circleColor = (game.getCurrentPlayer() == 1) ? Color.BLACK:Color.WHITE;
+            }
+
+            // Create a new image that will hold the white circle
+            circleImage = new BufferedImage(DIAMETER_ICON, DIAMETER_ICON, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = circleImage.createGraphics();
+
+            // Set the color to white and fill the circle with it
+            g2.setColor(circleColor);
+            g2.fillOval(0, 0, DIAMETER_ICON, DIAMETER_ICON);
+            g2.dispose();
+
+            // Create an ImageIcon from the circle image
+            circleIcon = new ImageIcon(circleImage);
+
+            circleLabel.setIcon(circleIcon);
+            turnLabel.setText(text);
         }
     }
 
@@ -249,15 +322,22 @@ public class StartGUI extends JFrame{
 
             // center panel
             GridBagConstraints gbc = new GridBagConstraints();
+
             // order elements vertically
             gbc.gridwidth = GridBagConstraints.REMAINDER;
 
             // make buttons the same width
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
-            ClickablePanel clickablePanel = new ClickablePanel();
+            if (!game.finished){
+                clickablePanel = new ClickablePanel();
+                add(clickablePanel, gbc);
+            }
 
-            add(clickablePanel, gbc);
+            else{
+                unclickablePanel = new UnclickablePanel();
+                add(unclickablePanel, gbc);
+            }
 
         }
         @Override
@@ -316,20 +396,60 @@ public class StartGUI extends JFrame{
             // pawns
             for(int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    if (game.board.grid[i][j] == 1) {
+                    if (game.getPiece(i, j) == 1) {
                         g2.setColor(Color.BLACK);
                         g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
                         }
-                    if (game.board.grid[i][j] == 2) {
+                    if (game.getPiece(i, j) == 2) {
                         g2.setColor(Color.WHITE);
                         g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
                         }
+                    if (game.getPiece(i, j) == 3) {
+                        g2.setColor(Color.BLACK);
+                        g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
+                        g2.setColor(Color.GREEN);
+                        g2.drawOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
+                    }
+                    if (game.getPiece(i, j) == 4) {
+                        g2.setColor(Color.WHITE);
+                        g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
+                        g2.setColor(Color.GREEN);
+                        g2.drawOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
+                    }
                 }
             }
         }
     }
 
-    private class ClickablePanel extends JPanel{
+    private class UnclickablePanel extends JPanel{
+        final Dimension internalBoardDimension;
+        UnclickablePanel(){
+            //setLayout(new GridLayout(size, size));
+            setOpaque(false);
+
+            internalBoardDimension = new Dimension(PANEL_WIDTH * (size), PANEL_WIDTH * (size));
+
+            setPreferredSize(internalBoardDimension);
+
+        }
+        @Override
+        protected void paintComponent(Graphics g){
+            Graphics2D g2 = (Graphics2D) g;
+            super.paintComponent(g);
+
+            if (hoveredCol > -1) {
+                if (game.checkEmpty(hoveredCol, hoveredRow) && game.checkDiagonal(hoveredCol, hoveredRow)){
+                    g2.setColor(Color.GREEN);
+                }
+                else {
+                    g2.setColor(Color.RED);
+                }
+                g2.fillOval(PANEL_WIDTH * hoveredCol, PANEL_WIDTH * hoveredRow, PANEL_WIDTH, PANEL_WIDTH);
+            }
+        }
+    }
+
+    private class ClickablePanel extends UnclickablePanel{
         final Dimension internalBoardDimension;
         ClickablePanel(){
             setLayout(new GridLayout(size, size));
@@ -362,17 +482,12 @@ public class StartGUI extends JFrame{
                         public void actionPerformed(ActionEvent e) {
 
                             if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
-                                game.addPiece(finalCol, finalRow);
+                                game.addPiece(finalCol, finalRow, false);
                                 game.progress();
+                                boardPanel.setTurnLabel();
                             }
-                            if (game.getTurn() == 2){
-                                createGameCard(true, false);
-                            }
-                            if (game.getTurn() == 3){
-                                createGameCard(false, false);
-                            }
-                            if (game.checkPassable()){
-                                createGameCard(false, true);
+                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.finished){
+                                createGameCard();
                             }
                         }
                     });
@@ -395,21 +510,6 @@ public class StartGUI extends JFrame{
 
             }
 
-        }
-        @Override
-        protected void paintComponent(Graphics g){
-            Graphics2D g2 = (Graphics2D) g;
-            super.paintComponent(g);
-
-            if (hoveredCol > -1) {
-                if ((game.checkEmpty(hoveredCol, hoveredRow)) && (game.checkDiagonal(hoveredCol, hoveredRow))){
-                    g2.setColor(Color.GREEN);
-                }
-                else {
-                    g2.setColor(Color.RED);
-                }
-                g2.fillOval(PANEL_WIDTH * hoveredCol, PANEL_WIDTH * hoveredRow, PANEL_WIDTH, PANEL_WIDTH);
-            }
         }
     }
 
@@ -442,11 +542,11 @@ public class StartGUI extends JFrame{
 
     private void initializeGame(int size){
         game = new Game(size);
-        createGameCard(false, false);
+        createGameCard();
     }
 
-    private void createGameCard(boolean pieRule, boolean passable){
-        BoardPanel boardPanel = new BoardPanel(pieRule, passable);
+    private void createGameCard(){
+        boardPanel = new BoardPanel();
         contentPane.add("boardPanel", boardPanel);
         cards.show(contentPane, "boardPanel");
     }

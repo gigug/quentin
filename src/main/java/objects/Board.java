@@ -1,7 +1,5 @@
 package objects;
 
-import java.util.Arrays;
-
 public class Board {
 
     public int size;
