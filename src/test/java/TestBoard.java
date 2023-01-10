@@ -9,20 +9,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBoard {
 
-    int size = 3;
-
-    Game game = new Game(size);
-    int[][] testGrid = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-
     @Test
     public void testGrid(){
-        assertArrayEquals(game.board.grid, testGrid);
+
+        int testSize = 3;
+        Board testBoard = new Board(testSize);
+
+        int[][] testGrid = {{0, 0, 0},
+                            {0, 0, 0},
+                            {0, 0, 0}};
+        assertArrayEquals(testBoard.getGrid(), testGrid);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     public void testGetPiece(int tileId) {
-        assertEquals(game.board.getPiece(tileId, tileId), 0);
+        int testSize = 3;
+        Board testBoard = new Board(testSize);
+
+        assertEquals(testBoard.getPiece(tileId, tileId), 0);
     }
 
 }

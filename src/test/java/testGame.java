@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import screens.Game;
 
 import java.util.*;
@@ -131,37 +130,58 @@ public class testGame {
 
     @Test
     public void testFindRegions(){
-        int testSize = 5;
+        int testSize = 2;
         Game testGame = new Game(testSize);
 
         // add black pieces
-        testGame.addPiece(2,1);
-        testGame.addPiece(1,2);
-        testGame.addPiece(3,2);
-        testGame.addPiece(2,3);
+        testGame.addPiece(0,0);
+        testGame.addPiece(0,1);
+        testGame.addPiece(1,0);
+
+        testGame.findRegions(false);
 
         // region
-        List<List<int[]>> regions = new ArrayList<>();
-        List<int[]> region = new ArrayList<int[]>();
-        int[] regionElement = {1,1};
+        int[] regionElement = {1, 1};
 
-        region.add(regionElement);
-        regions.add(region);
+        List<List<int[]>> regionsPredicted = testGame.getRegions();
+        List<int[]> regionPredicted = regionsPredicted.get(0);
+        int[] regionElementPredicted = regionPredicted.get(0);
 
         // true
-        assertEquals(regions, testGame.getRegions());
+        assertArrayEquals(regionElement, regionElementPredicted);
+    }
+
+    @Test
+    public void testFindTerritories(){
+
+        int testSize = 5;
+        Game testGame = new Game(testSize);
+
+        testGame.addPiece(1, 2);
+        testGame.addPiece(2, 1);
+        testGame.addPiece(3, 2);
+        testGame.addPiece(2, 3);
+
+        // region
+        int[] territoryElement = {2,2};
 
         // check that the region is a territory
-        testGame.validateTerritories();
-        assertEquals(regions, testGame.getTerritories());
+        testGame.findRegions(false);
+        testGame.checkTerritories();
+
+        List<int[]> territoryPredicted = testGame.getTerritories().get(0);
+        int[] territoryElementPredicted = territoryPredicted.get(0);
+
+        assertArrayEquals(territoryElementPredicted, territoryElement);
 
         // check that the color is correct
-        List<Integer> territoriesColor = new ArrayList<>();
-        int color = 0;
-        territoriesColor.add(color);
+        int color = 1;
 
         testGame.findTerritoriesColor();
-        assertEquals(territoriesColor, testGame.getTerritoriesColors());
+
+        int territoryColorPredicted = testGame.getTerritoriesColors().get(0);
+
+        assertEquals(color, territoryColorPredicted);
     }
 
     @Test
@@ -177,24 +197,29 @@ public class testGame {
         testGame.addPiece(0,4);
 
         // region
-        List<List<int[]>> chains = new ArrayList<>();
         List<int[]> chain = new ArrayList<int[]>();
-        int[] chainElement1 = {0,0};
-        int[] chainElement2 = {0,1};
-        int[] chainElement3 = {0,2};
-        int[] chainElement4 = {0,3};
-        int[] chainElement5 = {0,4};
+        int[] chainElement0 = {0,0};
+        int[] chainElement1 = {0,1};
+        int[] chainElement2 = {0,2};
+        int[] chainElement3 = {0,3};
+        int[] chainElement4 = {0,4};
 
+        chain.add(chainElement0);
         chain.add(chainElement1);
         chain.add(chainElement2);
         chain.add(chainElement3);
         chain.add(chainElement4);
-        chain.add(chainElement5);
 
-        chains.add(chain);
+        testGame.findRegions(true);
+
+        List<int[]> chainPredicted = testGame.getChains().get(0);
 
         // true
-        assertEquals(chains, testGame.getChains());
+        assertArrayEquals(chainPredicted.get(0), chainElement0);
+        assertArrayEquals(chainPredicted.get(1), chainElement1);
+        assertArrayEquals(chainPredicted.get(2), chainElement2);
+        assertArrayEquals(chainPredicted.get(3), chainElement3);
+        assertArrayEquals(chainPredicted.get(4), chainElement4);
     }
 
     @Test

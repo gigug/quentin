@@ -41,6 +41,10 @@ public class Game {
         this.currentPlayer = new PlayerWrapper(blackPlayer);
     }
 
+    public void loadCurrentPlayer(int loadedPlayer){
+        this.currentPlayer = (loadedPlayer == 1) ? new PlayerWrapper(blackPlayer) : new PlayerWrapper(whitePlayer);
+    }
+
     public int getCurrentPlayer() {
         return currentPlayer.getSide();
     }
@@ -442,6 +446,10 @@ public class Game {
         colorTerritories();
     }
 
+    public void loadGrid(int[][] newGrid) {
+        this.board.loadGrid(newGrid);
+    }
+
     public void progress(){
         increaseTurn();
         findRegions(false);
@@ -450,5 +458,13 @@ public class Game {
         checkTie();
         emptyRegions();
         switchPlayer();
+    }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public void loadTurn(int loadedTurn) {
+        this.turn = loadedTurn;
     }
 }

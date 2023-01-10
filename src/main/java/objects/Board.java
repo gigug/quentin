@@ -14,6 +14,10 @@ public class Board {
         this.initializeGrid();
     }
 
+    public int[][] getGrid(){
+        return this.grid;
+    }
+
     public void initializeGrid(){
         for(int i = 0; i < this.size; i++)
             for(int j = 0; j < this.size; j++)
@@ -35,5 +39,9 @@ public class Board {
 
     public int getSize() {
         return this.size;
+    }
+
+    public void loadGrid(int[][] newGrid) {
+        this.grid = newGrid;
     }
 }

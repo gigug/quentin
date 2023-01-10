@@ -1,5 +1,6 @@
 package gui;
 
+import players.PlayerWrapper;
 import screens.Game;
 
 import javax.swing.*;
@@ -8,7 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import static gui.FunctionsGUI.centerWindow;
 
@@ -19,8 +22,8 @@ public class StartGUI extends JFrame{
     Container contentPane;
 
     // board settings
-    private final Font fontBig = new Font("monospaced", Font.BOLD, 40);
-    private final Font fontSmall = new Font("monospaced", Font.BOLD, 20);
+    private final Font fontBig = new Font("monospaced", Font.TRUETYPE_FONT, 35);
+    private final Font fontSmall = new Font("monospaced", Font.TRUETYPE_FONT, 20);
     private final Color fontColor = Color.decode("#E1F2FE");
     private final Color backgroundColor = Color.decode("#35012C");
     private final Color boardColor = Color.decode("#815E5B");
@@ -32,9 +35,9 @@ public class StartGUI extends JFrame{
     int hoveredCol = -1;
 
     private final static Dimension WINDOW_DIMENSION= new Dimension(700, 700);
-    private final static int DIAMETER_ICON = 34;
+    private final static int DIAMETER_ICON = 30;
     // panel width
-    private final static int PANEL_WIDTH = 34;
+    private final static int PANEL_WIDTH = 30;
     private final static Dimension TILE_PANEL_DIMENSION = new Dimension(PANEL_WIDTH, PANEL_WIDTH);
 
     // panels
@@ -141,7 +144,7 @@ public class StartGUI extends JFrame{
             size7Button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    numberTiles = 2;
+                    numberTiles = 7;
                     size = numberTiles + 1;
                     initializeGame(size);
                 }
@@ -268,6 +271,10 @@ public class StartGUI extends JFrame{
             }
 
             add(buttonPanel, gbc);
+        }
+
+        public void redrawInternalBoardPanel(){
+            internalBoardPanel = new InternalBoardPanel();
         }
 
         public void setTurnLabel() {
@@ -482,7 +489,7 @@ public class StartGUI extends JFrame{
                         public void actionPerformed(ActionEvent e) {
 
                             if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
-                                game.addPiece(finalCol, finalRow, false);
+                                game.addPiece(finalCol, finalRow);
                                 game.progress();
                                 boardPanel.setTurnLabel();
                             }
@@ -527,6 +534,29 @@ public class StartGUI extends JFrame{
             });
             fileMenu.add(newGameMenuItem);
 
+            final JMenuItem saveGameMenuItem = new JMenuItem("Save Game");
+            saveGameMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    saveGame();
+                }
+            });
+            fileMenu.add(saveGameMenuItem);
+
+            final JMenuItem loadGameMenuItem = new JMenuItem("Load Game");
+            loadGameMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    // load game
+                    loadGame();
+
+                    // create new game card
+                    createGameCard();
+                }
+            });
+            fileMenu.add(loadGameMenuItem);
+
             final JMenuItem exitMenuItem = new JMenuItem("Exit");
             exitMenuItem.addActionListener(new ActionListener() {
                 @Override
@@ -549,6 +579,53 @@ public class StartGUI extends JFrame{
         boardPanel = new BoardPanel();
         contentPane.add("boardPanel", boardPanel);
         cards.show(contentPane, "boardPanel");
+    }
+
+    public void saveGame() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Game");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Game files (*.game)", "game"));
+        int result = fileChooser.showSaveDialog(new JFrame());
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String fileName = file.getAbsolutePath();
+            if (!fileName.endsWith(".game")) {
+                fileName += ".game";
+            }
+            try (FileOutputStream fos = new FileOutputStream(fileName);
+                 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                oos.writeObject(this.game.getSize());
+                oos.writeObject(this.game.getGrid());
+                oos.writeObject(this.game.getCurrentPlayer());
+                oos.writeObject(this.game.getTurn());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadGame() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Load Game");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Game files (*.game)", "game"));
+        int result = fileChooser.showOpenDialog(new JFrame());
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String fileName = file.getAbsolutePath();
+            try (FileInputStream fis = new FileInputStream(fileName);
+                 ObjectInputStream ois = new ObjectInputStream(fis)) {
+                size = (int) ois.readObject();
+                numberTiles = size - 1;
+
+                game = new Game(size);
+
+                game.loadGrid((int[][]) ois.readObject());
+                game.loadCurrentPlayer((int) ois.readObject());
+                game.loadTurn((int) ois.readObject());
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
