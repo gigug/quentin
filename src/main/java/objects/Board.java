@@ -2,46 +2,58 @@ package objects;
 
 public class Board {
 
-    public int size;
+    // game board
+    private int[][] grid;
 
-    public int[][] grid;
-
+    /**
+     * Constructor method to create a new Board object.
+     *
+     * @param size integer indicating the number of intersections where to place pawns
+     */
     public Board(int size){
-
-        // size indicates the number of intersections where to place pawns
-        this.size = size;
-        this.grid = new int[this.size][this.size];
-        this.initializeGrid();
+        // size = number of intersections (per side) where to place pawns
+        // initialize grid elements to 0
+        this.grid = new int[size][size];
     }
 
+    /**
+     * Getter method to retrieve the game board grid
+     *
+     * @return 2D integer array representing the game board
+     */
     public int[][] getGrid(){
         return this.grid;
     }
 
-    public void initializeGrid(){
-        for(int i = 0; i < this.size; i++)
-            for(int j = 0; j < this.size; j++)
-                this.grid[i][j] = 0;
+    /**
+     * Getter method to retrieve the piece at the specified position on the game board
+     *
+     * @param X int representing the x position of the piece
+     * @param Y int representing the y position of the piece
+     * @return int representing the value of the piece at the specified position
+     */
+    public int getPiece(int X, int Y){
+        return this.grid[X][Y];
     }
 
-    public void viewGrid(){
-        for(int i=0; i < this.size; i++){
-            for(int j=0; j < this.size; j++){
-                System.out.print(String.format("%2s", this.grid[i][j]));
-            }
-            System.out.println("");
-        }
+    /**
+     * Setter method to add a piece at the specified position
+     *
+     * @param X int representing the x position of the piece
+     * @param Y int representing the y position of the piece
+     * @param color representing the color of the piece to place at the specified position
+     */
+    public void addPiece(int X, int Y, int color){
+        this.grid[X][Y] = color;
     }
 
-    public int getPiece(int tileIdX, int tileIdY){
-        return this.grid[tileIdX][tileIdY];
-    }
-
-    public int getSize() {
-        return this.size;
-    }
-
-    public void loadGrid(int[][] newGrid) {
+    /**
+     * Method to update the current game board grid with a new grid when loading a game
+     *
+     * @param newGrid 2D int array representing the new game board
+     */
+    public void setGrid(int[][] newGrid) {
         this.grid = newGrid;
     }
+
 }

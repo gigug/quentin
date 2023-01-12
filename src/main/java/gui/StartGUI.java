@@ -1,6 +1,5 @@
 package gui;
 
-import players.PlayerWrapper;
 import screens.Game;
 
 import javax.swing.*;
@@ -251,13 +250,14 @@ public class StartGUI extends JFrame{
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         game.changePiecePieRule();
+                        game.switchPlayer();
                         createGameCard();
                     }
                 });
                 buttonPanel.add(pieRuleButton);
             }
 
-            if (game.checkPassable() && !game.finished){
+            if (game.checkPassable() && !game.isFinished()){
                 BlackButton passableButton = new BlackButton("Pass");
                 passableButton.setFont(fontSmall);
                 passableButton.addActionListener(new ActionListener() {
@@ -269,6 +269,16 @@ public class StartGUI extends JFrame{
                 });
                 buttonPanel.add(passableButton);
             }
+
+            BlackButton saveGameMenuButton = new BlackButton("Save Game");
+            saveGameMenuButton.setFont(fontSmall);
+            saveGameMenuButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    saveGame();
+                }
+            });
+            buttonPanel.add(saveGameMenuButton);
 
             add(buttonPanel, gbc);
         }
@@ -283,7 +293,7 @@ public class StartGUI extends JFrame{
             BufferedImage circleImage;
             ImageIcon circleIcon;
 
-            if (game.finished){
+            if (game.isFinished()){
                 if (game.getWinner() == 0){
                     text = "Tie!";
                     circleColor = Color.BLUE;
@@ -336,7 +346,7 @@ public class StartGUI extends JFrame{
             // make buttons the same width
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
-            if (!game.finished){
+            if (!game.isFinished()){
                 clickablePanel = new ClickablePanel();
                 add(clickablePanel, gbc);
             }
@@ -489,11 +499,11 @@ public class StartGUI extends JFrame{
                         public void actionPerformed(ActionEvent e) {
 
                             if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
-                                game.addPiece(finalCol, finalRow);
+                                game.addPiece(finalCol, finalRow, game.getCurrentPlayer());
                                 game.progress();
                                 boardPanel.setTurnLabel();
                             }
-                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.finished){
+                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.isFinished()){
                                 createGameCard();
                             }
                         }
@@ -533,15 +543,6 @@ public class StartGUI extends JFrame{
                 }
             });
             fileMenu.add(newGameMenuItem);
-
-            final JMenuItem saveGameMenuItem = new JMenuItem("Save Game");
-            saveGameMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    saveGame();
-                }
-            });
-            fileMenu.add(saveGameMenuItem);
 
             final JMenuItem loadGameMenuItem = new JMenuItem("Load Game");
             loadGameMenuItem.addActionListener(new ActionListener() {
@@ -619,9 +620,9 @@ public class StartGUI extends JFrame{
 
                 game = new Game(size);
 
-                game.loadGrid((int[][]) ois.readObject());
+                game.setGrid((int[][]) ois.readObject());
                 game.loadCurrentPlayer((int) ois.readObject());
-                game.loadTurn((int) ois.readObject());
+                game.setTurn((int) ois.readObject());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
