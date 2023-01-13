@@ -8,5 +8,6 @@ public class BlackButton extends JButton{
         super(text);
         setBackground(Color.BLACK);
         setForeground(Color.WHITE);
+        setFont(StartGUI.FONT_SMALL);
     }
 }

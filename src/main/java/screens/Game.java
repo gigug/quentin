@@ -9,7 +9,7 @@ import players.Player;
 import players.PlayerWrapper;
 
 /**
- * Game class that implements the board game Quentin
+ * Class that implements the board game Quentin
  */
 public class Game {
     // Declare players
@@ -43,7 +43,11 @@ public class Game {
     int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
     int[][] directionsDiagonal = new int[][]{{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
 
-    // Game constructor
+    /**
+     * Constructor for the class Game
+     *
+     * @param size int representing the size of the grid (number of intersections per side)
+     */
     public Game(int size) {
         // size = number of intersections (per side) where to place pawns
         this.size = size;
@@ -640,41 +644,95 @@ public class Game {
         }
     }
 
+    /**
+     * Getter method to retrieve the winner
+     *
+     * @return winner int representing the winner
+     */
     public int getWinner(){
         return this.winner;
     }
+
+    /**
+     * Getter method to retrieve the turn
+     *
+     * @return turn int representing the turn
+     */
     public int getTurn(){
         return this.turn;
     }
 
+    /**
+     * Method to increase the turn counter by one
+     */
     public void increaseTurn(){
         this.turn += 1;
     }
 
+    /**
+     * Method to check if territories have formed and color them
+     */
     public void checkTerritories(){
+        // transform valid regions into territories
         validateTerritories();
+
+        // find territory colors
         findTerritoryColors();
+
+        // color them
         colorTerritories();
     }
 
+    /**
+     * Setter method for the board grid
+     *
+     * @param newGrid int[][] representing the loaded grid
+     */
     public void setGrid(int[][] newGrid) {
         this.board.setGrid(newGrid);
     }
 
+    /**
+     * Method to carry out every action needed at the end of a turn
+     */
     public void progress(){
+
+        // increment the turn counter
         increaseTurn();
+
+        // find regions
         findRegions(false);
+
+        // check if regions are territories and color them
         checkTerritories();
+
+        // check for win
         checkWin();
+
+        // check for ie
         checkTie();
+
+        // reset regions, chains, territories and their colors
         emptyRegions();
+
+        // set next player
         switchPlayer();
     }
 
+    /*
+    * Getter method to retrieve the size of the grid (number of intersections per side)
+    *
+    * @return size int representing the size of the grid
+     */
     public int getSize() {
         return this.size;
     }
 
+    /**
+     * Setter method to set the correct turn when loading a game
+     *
+     * @param loadedTurn int representing the loaded turn
+     */
     public void setTurn(int loadedTurn) {
         this.turn = loadedTurn;
     }
