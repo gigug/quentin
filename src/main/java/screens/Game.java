@@ -548,7 +548,7 @@ public class Game {
     /**
      * Method to increase the turn counter by one.
      */
-    public void increaseTurn(){
+    public void increaseTurn(){ 
         turn += 1;
     }
 
