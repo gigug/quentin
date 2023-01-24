@@ -17,11 +17,11 @@ public class testGame {
         Game testGame = new Game(testSize);
 
         // add black pawn
-        testGame.addPiece(0, 0, 0);
+        testGame.addPiece(0, 0, 1);
 
         // add white pawns
-        testGame.addPiece(1, 0, 1);
-        testGame.addPiece(0, 1, 1);
+        testGame.addPiece(1, 0, 2);
+        testGame.addPiece(0, 1, 2);
 
         assertTrue(testGame.checkPassable());
     }
@@ -34,7 +34,7 @@ public class testGame {
         Game testGame = new Game(testSize);
 
         // add black pawn
-        testGame.addPiece(1, 1, 0);
+        testGame.addPiece(1, 1, 1);
 
         assertFalse(testGame.checkDiagonal(posX, posY));
     }
@@ -47,8 +47,8 @@ public class testGame {
         Game testGame = new Game(testSize);
 
         // add black pawns
-        testGame.addPiece(1, 1, 0);
-        testGame.addPiece(1, 0, 0);
+        testGame.addPiece(1, 1, 1);
+        testGame.addPiece(1, 0, 1);
 
         assertTrue(testGame.checkDiagonal(posX, posY));
     }
@@ -101,7 +101,7 @@ public class testGame {
         assertTrue(testGame.checkEmpty(0,0));
 
         // add piece
-        testGame.addPiece(1,1, 0);
+        testGame.addPiece(1,1, 1);
 
         // false
         assertFalse(testGame.checkEmpty(1,1));
@@ -113,10 +113,10 @@ public class testGame {
         Game testGame = new Game(testSize);
 
         // add pieces
-        testGame.addPiece(0,0, 0);
-        testGame.addPiece(0,1, 0);
-        testGame.addPiece(1,0, 0);
-        testGame.addPiece(1,1, 0);
+        testGame.addPiece(0,0, 1);
+        testGame.addPiece(0,1, 1);
+        testGame.addPiece(1,0, 1);
+        testGame.addPiece(1,1, 1);
 
         // true
         assertTrue(testGame.checkPassable());
@@ -128,9 +128,9 @@ public class testGame {
         Game testGame = new Game(testSize);
 
         // add black pieces
-        testGame.addPiece(0,0, 0);
-        testGame.addPiece(0,1, 0);
-        testGame.addPiece(1,0, 0);
+        testGame.addPiece(0,0, 1);
+        testGame.addPiece(0,1, 1);
+        testGame.addPiece(1,0, 1);
 
         testGame.findRegions(false);
 
@@ -151,10 +151,10 @@ public class testGame {
         int testSize = 5;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(1, 2, 0);
-        testGame.addPiece(2, 1, 0);
-        testGame.addPiece(3, 2, 0);
-        testGame.addPiece(2, 3, 0);
+        testGame.addPiece(1, 2, 1);
+        testGame.addPiece(2, 1, 1);
+        testGame.addPiece(3, 2, 1);
+        testGame.addPiece(2, 3, 1);
 
         // region
         int[] territoryElement = {2,2};
@@ -184,11 +184,11 @@ public class testGame {
         Game testGame = new Game(testSize);
 
         // add black pieces
-        testGame.addPiece(0,0, 0);
-        testGame.addPiece(0,1, 0);
-        testGame.addPiece(0,2, 0);
-        testGame.addPiece(0,3, 0);
-        testGame.addPiece(0,4, 0);
+        testGame.addPiece(0,0, 1);
+        testGame.addPiece(0,1, 1);
+        testGame.addPiece(0,2, 1);
+        testGame.addPiece(0,3, 1);
+        testGame.addPiece(0,4, 1);
 
         // region
         List<int[]> chain = new ArrayList<int[]>();
@@ -223,7 +223,7 @@ public class testGame {
         int[][] testGrid = {{2,0}, {0,0}};
 
         // add black piece
-        testGame.addPiece(0,0, 0);
+        testGame.addPiece(0,0, 1);
 
         // call pie rule
         testGame.changePiecePieRule();
@@ -237,8 +237,8 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(0,0, 0);
-        testGame.addPiece(0,1, 0);
+        testGame.addPiece(0,0, 1);
+        testGame.addPiece(0,1, 1);
 
         // check win
         testGame.checkWin();
@@ -252,8 +252,8 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(0,0, 0);
-        testGame.addPiece(0,1, 1);
+        testGame.addPiece(0,0, 1);
+        testGame.addPiece(0,1, 2);
 
         // check win
         testGame.checkWin();
@@ -266,13 +266,13 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(0,0, 0);
-        testGame.addPiece(1,1, 0);
-
-        testGame.addPiece(0,1, 1);
-        testGame.addPiece(1,0, 1);
+        testGame.addPiece(0,0, 1);
+        testGame.addPiece(1,1, 1);
+        testGame.addPiece(0,1, 2);
+        testGame.addPiece(1,0, 2);
 
         // check tie
+        testGame.checkWin();
         testGame.checkTie();
 
         assertTrue(testGame.isFinished());
