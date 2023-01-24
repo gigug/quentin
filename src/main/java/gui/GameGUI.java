@@ -16,11 +16,11 @@ import static gui.FunctionsGUI.centerWindow;
 /**
  * Class that implements the GUI for the game Quentin.
  */
-public class StartGUI extends JFrame{
+public class GameGUI extends JFrame{
 
     // Constants
     final static Font FONT_BIG = new Font("monospaced", Font.BOLD, 35);
-    final static Font FONT_SMALL = new Font("monospaced", Font.TRUETYPE_FONT, 20);
+    final static Font FONT_SMALL = new Font("monospaced", Font.PLAIN, 20);
     final static Color FONT_COLOR = Color.decode("#E1F2FE");
     private final static Color BACKGROUND_COLOR_1 = Color.decode("#F46036");
     private final static Color BACKGROUND_COLOR_2 = Color.decode("#8963BA");
@@ -47,28 +47,17 @@ public class StartGUI extends JFrame{
     private int hoveredRow = -1;
     private int hoveredCol = -1;
 
-    // Panels
-    StartMenuPanel startMenuPanel;
-    SelectSizePanel selectSizePanel;
-    BoardPanel boardPanel;
-    InternalBoardPanel internalBoardPanel;
-    UnclickablePanel unclickablePanel;
-    ClickablePanel clickablePanel;
-    MenuBar menuBar;
+    private BoardPanel boardPanel;
 
-    public StartGUI(){
+    public GameGUI(){
 
         // Initialize contentPane
         contentPane = getContentPane();
 
-        // Initialize start menu panel
-        startMenuPanel = new StartMenuPanel();
+        StartMenuPanel startMenuPanel = new StartMenuPanel();
+        SelectSizePanel selectSizePanel = new SelectSizePanel();
 
-        // Initialize select size panel
-        selectSizePanel = new SelectSizePanel();
-
-        // Initialize menuBar
-        menuBar = new MenuBar();
+        MenuBar menuBar = new MenuBar();
 
         // Initialize cards
         contentPane.setLayout(CARDS);
@@ -108,34 +97,21 @@ public class StartGUI extends JFrame{
 
             // Start new game
             BlackButton newGameButton = new BlackButton("New game");
-            newGameButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    CARDS.show(contentPane, "selectSizePanel");
-                }
-            });
+            newGameButton.addActionListener(e -> CARDS.show(contentPane, "selectSizePanel"));
 
             // Load game
             BlackButton loadGameButton = new BlackButton("Load game");
-            loadGameButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Load game
-                    loadGame();
+            loadGameButton.addActionListener(e -> {
+                // Load game
+                loadGame();
 
-                    // Create new game card
-                    createGameCard();
-                }
+                // Create new game card
+                createGameCard();
             });
 
             // Exit game
             BlackButton exitGameButton = new BlackButton("Exit game");
-            exitGameButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
+            exitGameButton.addActionListener(e -> System.exit(0));
 
             // Constraints for grid bag layout
             GridBagConstraints gbc = new GridBagConstraints();
@@ -234,13 +210,13 @@ public class StartGUI extends JFrame{
             setLayout(GRID_BAG_LAYOUT);
             setBackground(BACKGROUND_COLOR_3);
 
-            internalBoardPanel = new InternalBoardPanel();
+            InternalBoardPanel internalBoardPanel = new InternalBoardPanel();
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.insets = INSETS;
 
-            // turnPanel displays the current player and a small colored circle indicating its pawn
+            // turnPanel displays the current player and a small colored circle indicating its stone
             turnPanel.add(turnLabel);
             turnPanel.add(circleLabel);
             setTurnLabel();
@@ -253,69 +229,44 @@ public class StartGUI extends JFrame{
 
             // undo move button
             BlackButton undoButton = new BlackButton("Undo move");
-            undoButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    game.undoMove();
-                    createGameCard();
-                }
+            undoButton.addActionListener(e -> {
+                game.undoMove();
+                createGameCard();
             });
             buttonPanel.add(undoButton);
 
             BlackButton pieRuleButton = new BlackButton("Switch sides");
-            pieRuleButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    game.addStack();
-                    game.changePiecePieRule();
-                    game.increaseTurn();
-                    game.switchPlayer();
-                    createGameCard();
-                }
+            pieRuleButton.addActionListener(e -> {
+                game.addStack();
+                game.changeStonePieRule();
+                game.increaseTurn();
+                game.switchPlayer();
+                createGameCard();
             });
             pieRuleButton.setEnabled(false);
             buttonPanel.add(pieRuleButton);
 
             BlackButton passableButton = new BlackButton("Pass");
-            passableButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    game.switchPlayer();
-                    createGameCard();
-                }
+            passableButton.addActionListener(e -> {
+                game.switchPlayer();
+                createGameCard();
             });
             passableButton.setEnabled(false);
             buttonPanel.add(passableButton);
 
             // save game button
             BlackButton saveGameMenuButton = new BlackButton("Save Game");
-            saveGameMenuButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    saveGame();
-                }
-            });
+            saveGameMenuButton.addActionListener(e -> saveGame());
             buttonPanel.add(saveGameMenuButton);
 
-
-            if (game.getTurn() == 0){
-                undoButton.setEnabled(false);
-            }
+            // Disable undoButton at the beginning and at the end
+            if (game.getTurn() == 0 || game.isFinished()) undoButton.setEnabled(false);
             // During the second turn, the pie rule can be invoked by the white player
-            if (game.getTurn() == 1){
-                pieRuleButton.setEnabled(true);
-            }
-            else {
-                pieRuleButton.setEnabled(false);
-            }
-            // If the game is passable a pass button appears
-            if (game.checkPassable() && !game.isFinished()){
-                passableButton.setEnabled(true);
-            }
-            // If the game is finished, disable saveGame
-            if (game.isFinished()){
-                saveGameMenuButton.setEnabled(false);
-            }
+            if (game.getTurn() == 1) pieRuleButton.setEnabled(true);
+            // Enable passableButton when necessary
+            if (game.checkPassable() && !game.isFinished()) passableButton.setEnabled(true);
+            // Disable saveGame at the end of the game
+            if (game.isFinished()) saveGameMenuButton.setEnabled(false);
 
             add(buttonPanel, gbc);
         }
@@ -368,7 +319,7 @@ public class StartGUI extends JFrame{
      * Panel that draws the grid.
      */
     private class InternalBoardPanel extends JPanel{
-        int boardWidth;
+        private final int boardWidth;
         final Dimension boardDimension;
 
         /**
@@ -388,16 +339,8 @@ public class StartGUI extends JFrame{
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
-            // If the game is not finished create clickable panel of buttons
-            if (!game.isFinished()){
-                clickablePanel = new ClickablePanel();
-                add(clickablePanel, gbc);
-            }
-            // If the game is finished create unclickable panel of buttons
-            else{
-                unclickablePanel = new UnclickablePanel();
-                add(unclickablePanel, gbc);
-            }
+            ClickablePanel clickablePanel = new ClickablePanel();
+            add(clickablePanel, gbc);
 
         }
 
@@ -459,15 +402,15 @@ public class StartGUI extends JFrame{
             Color colorFill;
             Color colorSurface = Color.GREEN;
 
-            // Pieces
+            // stones
             for(int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    if (game.getPiece(i,j) != 0){
-                        colorFill = (game.getPiece(i, j) == 1 || game.getPiece(i, j) == 3) ? Color.BLACK : Color.WHITE;
+                    if (game.getStone(i,j) != 0){
+                        colorFill = (game.getStone(i, j) == 1 || game.getStone(i, j) == 3) ? Color.BLACK : Color.WHITE;
                         g2.setColor(colorFill);
                         g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
 
-                        if (game.getPiece(i, j) > 2){
+                        if (game.getStone(i, j) > 2){
                             g2.setColor(colorSurface);
                             g2.drawOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
                         }
@@ -478,15 +421,15 @@ public class StartGUI extends JFrame{
     }
 
     /**
-     * Panel that does not allow for pawn placement.
+     * Panel that draws board and stones.
      */
-    private class UnclickablePanel extends JPanel{
-        final Dimension internalBoardDimension;
+    private class ClickablePanel extends JPanel{
 
+        final Dimension internalBoardDimension;
         /**
-         * Default constructor for UnclickablePanel.
+         * Default constructor for ClickablePanel.
          */
-        UnclickablePanel(){
+        ClickablePanel(){
             super();
 
             setOpaque(false);
@@ -494,48 +437,33 @@ public class StartGUI extends JFrame{
             // Set preferred size for button placement grid
             internalBoardDimension = new Dimension(PANEL_WIDTH * (size), PANEL_WIDTH * (size));
             setPreferredSize(internalBoardDimension);
-        }
-    }
-
-    /**
-     * Panel that allows for pawn placement.
-     */
-    private class ClickablePanel extends UnclickablePanel{
-        private final JButton[][] squares;
-
-        /**
-         * Default constructor for ClickablePanel.
-         */
-        ClickablePanel(){
-            super();
 
             setLayout(new GridLayout(size, size));
 
-            // Create an array to hold the chessboard squares
-            squares = new JButton[size][size];
+            if (!game.isFinished()){
+                // Create an array to hold the chessboard squares
+                JButton[][] squares = new JButton[size][size];
 
-            // Create a button for each square and add it to the panel
-            for (int row = 0; row < size; row++) {
-                for (int col = 0; col < size; col++) {
-                    JButton button = new JButton();
-                    squares[row][col] = button;
-                    add(button);
+                // Create a button for each square and add it to the panel
+                for (int row = 0; row < size; row++) {
+                    for (int col = 0; col < size; col++) {
+                        JButton button = new JButton();
+                        squares[row][col] = button;
+                        add(button);
 
-                    // Set the button to be transparent
-                    button.setOpaque(false);
-                    button.setContentAreaFilled(false);
-                    button.setBorderPainted(false);
+                        // Set the button to be transparent
+                        button.setOpaque(false);
+                        button.setContentAreaFilled(false);
+                        button.setBorderPainted(false);
 
-                    // Add an ActionListener to the button to handle clicks
-                    final int finalRow = row;
-                    final int finalCol = col;
-                    button.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            // If move is doable, add pawn and progress
+                        // Add an ActionListener to the button to handle clicks
+                        final int finalRow = row;
+                        final int finalCol = col;
+                        button.addActionListener(e -> {
+                            // If move is doable, add stone and progress
                             if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
                                 game.addStack();
-                                game.addPiece(finalCol, finalRow, game.getCurrentPlayer());
+                                game.addStone(finalCol, finalRow, game.getCurrentPlayer());
                                 game.progress();
                                 boardPanel.setTurnLabel();
                             }
@@ -543,33 +471,33 @@ public class StartGUI extends JFrame{
                             if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.isFinished()){
                                 createGameCard();
                             }
-                        }
-                    });
+                        });
 
-                    // Set the hoveredRow and hoveredCol variables when the mouse enters the button
-                    // Reset when the mouse leaves the button
-                    button.addMouseListener(new java.awt.event.MouseAdapter() {
-                        @Override
-                        public void mouseEntered(MouseEvent e) {
-                            hoveredRow = finalRow;
-                            hoveredCol = finalCol;
-                            repaint();
-                        }
+                        // Set the hoveredRow and hoveredCol variables when the mouse enters the button
+                        // Reset when the mouse leaves the button
+                        button.addMouseListener(new java.awt.event.MouseAdapter() {
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                hoveredRow = finalRow;
+                                hoveredCol = finalCol;
+                                repaint();
+                            }
 
-                        public void mouseExited(java.awt.event.MouseEvent evt) {
-                            hoveredRow = -1;
-                            hoveredCol = -1;
-                            repaint();
-                        }
-                    });
+                            public void mouseExited(java.awt.event.MouseEvent evt) {
+                                hoveredRow = -1;
+                                hoveredCol = -1;
+                                repaint();
+                            }
+                        });
+                    }
+
                 }
-
             }
 
         }
 
         /*
-         * Method to paint hovered cells based on whether a pawn can be placed there from the current player
+         * Method to paint hovered cells based on whether a stone can be placed there from the current player
          *
          * @param g Graphics component
          */
@@ -578,7 +506,7 @@ public class StartGUI extends JFrame{
             Graphics2D g2 = (Graphics2D) g;
             super.paintComponent(g);
 
-            // Color hovered cells green if a pawn can be placed there, otherwise red
+            // Color hovered cells green if a stone can be placed there, otherwise red
             if (hoveredCol > -1) {
                 if (game.checkEmpty(hoveredCol, hoveredRow) && game.checkDiagonal(hoveredCol, hoveredRow)){
                     g2.setColor(Color.GREEN);
@@ -606,35 +534,22 @@ public class StartGUI extends JFrame{
 
             // New game item
             final JMenuItem newGameMenuItem = new JMenuItem("New Game");
-            newGameMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    CARDS.show(contentPane, "selectSizePanel");
-                }
-            });
+            newGameMenuItem.addActionListener(e -> CARDS.show(contentPane, "selectSizePanel"));
 
             // load game item
             final JMenuItem loadGameMenuItem = new JMenuItem("Load Game");
-            loadGameMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+            loadGameMenuItem.addActionListener(e -> {
 
-                    // Load game
-                    loadGame();
+                // Load game
+                loadGame();
 
-                    // Create new game card
-                    createGameCard();
-                }
+                // Create new game card
+                createGameCard();
             });
 
             // Exit program item
             final JMenuItem exitMenuItem = new JMenuItem("Exit");
-            exitMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
+            exitMenuItem.addActionListener(e -> System.exit(0));
 
             fileMenu.add(newGameMenuItem);
             fileMenu.add(loadGameMenuItem);

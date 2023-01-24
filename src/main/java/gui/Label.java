@@ -12,8 +12,8 @@ public class Label extends JLabel {
      */
     public Label(){
         super();
-        setFont(StartGUI.FONT_BIG);
-        setForeground(StartGUI.FONT_COLOR);
+        setFont(GameGUI.FONT_BIG);
+        setForeground(GameGUI.FONT_COLOR);
     }
 
     /**

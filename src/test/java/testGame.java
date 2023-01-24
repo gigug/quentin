@@ -12,16 +12,16 @@ public class testGame {
 
     @Test
     public void testPassable(){
-        // the following configuration of pawns has to be passable
+        // the following configuration of stones has to be passable
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        // add black pawn
-        testGame.addPiece(0, 0, 1);
+        // add black stone
+        testGame.addStone(0, 0, 1);
 
-        // add white pawns
-        testGame.addPiece(1, 0, 2);
-        testGame.addPiece(0, 1, 2);
+        // add white stones
+        testGame.addStone(1, 0, 2);
+        testGame.addStone(0, 1, 2);
 
         assertTrue(testGame.checkPassable());
     }
@@ -29,12 +29,12 @@ public class testGame {
     @ParameterizedTest
     @CsvSource({"0,0","0,2","2,2","2,0"})
     public void testCheckDiagonalFalse(int posX, int posY){
-        // the following configuration of pawns has to return false for checkDiagonal
+        // the following configuration of stones has to return false for checkDiagonal
         int testSize = 3;
         Game testGame = new Game(testSize);
 
-        // add black pawn
-        testGame.addPiece(1, 1, 1);
+        // add black stone
+        testGame.addStone(1, 1, 1);
 
         assertFalse(testGame.checkDiagonal(posX, posY));
     }
@@ -42,13 +42,13 @@ public class testGame {
     @ParameterizedTest
     @CsvSource({"0,0","1,2","2,1"})
     public void testCheckDiagonalTrue(int posX, int posY){
-        // the following configuration of pawns has to return false for checkDiagonal
+        // the following configuration of stones has to return false for checkDiagonal
         int testSize = 3;
         Game testGame = new Game(testSize);
 
-        // add black pawns
-        testGame.addPiece(1, 1, 1);
-        testGame.addPiece(1, 0, 1);
+        // add black stones
+        testGame.addStone(1, 1, 1);
+        testGame.addStone(1, 0, 1);
 
         assertTrue(testGame.checkDiagonal(posX, posY));
     }
@@ -100,8 +100,8 @@ public class testGame {
         // true
         assertTrue(testGame.checkEmpty(0,0));
 
-        // add piece
-        testGame.addPiece(1,1, 1);
+        // add stone
+        testGame.addStone(1,1, 1);
 
         // false
         assertFalse(testGame.checkEmpty(1,1));
@@ -112,11 +112,11 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        // add pieces
-        testGame.addPiece(0,0, 1);
-        testGame.addPiece(0,1, 1);
-        testGame.addPiece(1,0, 1);
-        testGame.addPiece(1,1, 1);
+        // add stones
+        testGame.addStone(0,0, 1);
+        testGame.addStone(0,1, 1);
+        testGame.addStone(1,0, 1);
+        testGame.addStone(1,1, 1);
 
         // true
         assertTrue(testGame.checkPassable());
@@ -127,10 +127,10 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        // add black pieces
-        testGame.addPiece(0,0, 1);
-        testGame.addPiece(0,1, 1);
-        testGame.addPiece(1,0, 1);
+        // add black stones
+        testGame.addStone(0,0, 1);
+        testGame.addStone(0,1, 1);
+        testGame.addStone(1,0, 1);
 
         testGame.findRegions(false);
 
@@ -151,10 +151,10 @@ public class testGame {
         int testSize = 5;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(1, 2, 1);
-        testGame.addPiece(2, 1, 1);
-        testGame.addPiece(3, 2, 1);
-        testGame.addPiece(2, 3, 1);
+        testGame.addStone(1, 2, 1);
+        testGame.addStone(2, 1, 1);
+        testGame.addStone(3, 2, 1);
+        testGame.addStone(2, 3, 1);
 
         // region
         int[] territoryElement = {2,2};
@@ -175,12 +175,12 @@ public class testGame {
         int testSize = 5;
         Game testGame = new Game(testSize);
 
-        // add black pieces
-        testGame.addPiece(0,0, 1);
-        testGame.addPiece(0,1, 1);
-        testGame.addPiece(0,2, 1);
-        testGame.addPiece(0,3, 1);
-        testGame.addPiece(0,4, 1);
+        // add black stones
+        testGame.addStone(0,0, 1);
+        testGame.addStone(0,1, 1);
+        testGame.addStone(0,2, 1);
+        testGame.addStone(0,3, 1);
+        testGame.addStone(0,4, 1);
 
         // region
         List<int[]> chain = new ArrayList<int[]>();
@@ -209,16 +209,16 @@ public class testGame {
     }
 
     @Test
-    public void testChangePiecePieRule(){
+    public void testChangestonePieRule(){
         int testSize = 2;
         Game testGame = new Game(testSize);
         int[][] testGrid = {{2,0}, {0,0}};
 
-        // add black piece
-        testGame.addPiece(0,0, 1);
+        // add black stone
+        testGame.addStone(0,0, 1);
 
         // call pie rule
-        testGame.changePiecePieRule();
+        testGame.changeStonePieRule();
 
         // true
         assertArrayEquals(testGame.getGrid(), testGrid);
@@ -229,8 +229,8 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(0,0, 1);
-        testGame.addPiece(0,1, 1);
+        testGame.addStone(0,0, 1);
+        testGame.addStone(0,1, 1);
 
         // check win
         testGame.checkWin();
@@ -244,8 +244,8 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(0,0, 1);
-        testGame.addPiece(0,1, 2);
+        testGame.addStone(0,0, 1);
+        testGame.addStone(0,1, 2);
 
         // check win
         testGame.checkWin();
@@ -258,10 +258,10 @@ public class testGame {
         int testSize = 2;
         Game testGame = new Game(testSize);
 
-        testGame.addPiece(0,0, 1);
-        testGame.addPiece(1,1, 1);
-        testGame.addPiece(0,1, 2);
-        testGame.addPiece(1,0, 2);
+        testGame.addStone(0,0, 1);
+        testGame.addStone(1,1, 1);
+        testGame.addStone(0,1, 2);
+        testGame.addStone(1,0, 2);
 
         // check tie
         testGame.checkWin();

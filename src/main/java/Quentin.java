@@ -1,4 +1,4 @@
-import gui.StartGUI;
+import gui.GameGUI;
 
 /**
  * Class implementing the game Quentin.
@@ -9,6 +9,6 @@ public class Quentin {
     public static void main(String[] args){
 
         // Start GUI
-        StartGUI startGUI = new StartGUI();
+        GameGUI startGUI = new GameGUI();
     }
 }

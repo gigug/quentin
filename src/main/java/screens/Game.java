@@ -33,7 +33,7 @@ public class Game {
     // Declare the board
     private final Board board;
 
-    // Number of intersections where to place pawns (= number of tiles + 1)
+    // Number of intersections where to place stones (= number of tiles + 1)
     private final int size;
 
     // Lists to hold the regions, chains, and territories
@@ -96,8 +96,8 @@ public class Game {
     /**
      * Check if coordinates are within the limits of the grid.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
      * @return true if the coordinates are within the limits of the grid.
      */
     public boolean checkInGrid(int X, int Y) {
@@ -108,15 +108,15 @@ public class Game {
      * Check if grid is empty in specified coordinates.
      * If coordinates are not within the limits of the grid, return true.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
      * @return true if grid is empty in specified coordinates.
      */
     public boolean checkEmpty(int X, int Y) {
         if (!checkInGrid(X, Y)){
             return true;
         }
-        return getPiece(X, Y) == 0;
+        return getStone(X, Y) == 0;
     }
 
     /**
@@ -139,8 +139,8 @@ public class Game {
             newX = X + dir[0];
             newY = Y + dir[1];
 
-            // Check if piece has the same color as current player while the orthogonal ones are different
-            if (getPiece(newX, newY) == getCurrentPlayer() && getPiece(newX, Y) != getCurrentPlayer() && getPiece(X, newY) != getCurrentPlayer()) {
+            // Check if stone has the same color as current player while the orthogonal ones are different
+            if (getStone(newX, newY) == getCurrentPlayer() && getStone(newX, Y) != getCurrentPlayer() && getStone(X, newY) != getCurrentPlayer()) {
                 valid = false;
                 break;
             }
@@ -200,7 +200,7 @@ public class Game {
 
             // Iterate over elements of chain
             for (int[] element : chain) {
-                color = getPiece(element[0], element[1]);
+                color = getStone(element[0], element[1]);
                 if (element[0] == 0) N = true;
                 if (element[0] == size - 1) S = true;
                 if (element[1] == 0) E = true;
@@ -209,9 +209,9 @@ public class Game {
 
             // If chain touches opposite sides, assign winner and finish game
             if ((N && S) || (E && W)) {
-                // Pawns belonging to the winning chains are colored differently to highlight them graphically
+                // stones belonging to the winning chains are colored differently to highlight them graphically
                 colorToUse = (color == 1) ? 3 : 4;
-                for (int[] element : chain) addPiece(element[0], element[1], colorToUse);
+                for (int[] element : chain) addStone(element[0], element[1], colorToUse);
 
                 // If no winners up to this point, add winner
                 if (winners.size() == 0) winners.add(color);
@@ -239,7 +239,7 @@ public class Game {
             outerloop:
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    if (getPiece(i, j) == 0) {
+                    if (getStone(i, j) == 0) {
                         isFull = false;
                         break outerloop;
                     }
@@ -267,7 +267,7 @@ public class Game {
                     // Start a new chain or region
                     List<int[]> region = new ArrayList<>();
                     if (chains && !checkEmpty(i, j)) {
-                        color = getPiece(i, j);
+                        color = getStone(i, j);
                         exploreRegion(i, j, visited, region, true, color);
                         addChain(region);
                     }
@@ -283,8 +283,8 @@ public class Game {
     /**
      * Support method for the findRegions method.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
      * @param visited array indicating which coordinates have been visited.
      * @param region list of coordinates belonging to that region.
      * @param chains boolean indicating whether to find chains or regions.
@@ -293,7 +293,7 @@ public class Game {
     private void exploreRegion(int X, int Y, boolean[][] visited, List<int[]> region, boolean chains, int color) {
 
         // If: searching for chains and found wrong color or searching for regions and not empty, return
-        if ((chains && getPiece(X, Y) != color) || (!chains && !checkEmpty(X, Y))){
+        if ((chains && getStone(X, Y) != color) || (!chains && !checkEmpty(X, Y))){
             return;
         }
 
@@ -396,7 +396,7 @@ public class Game {
                         }
                         if (!found) {
                             listOccupiedNeighbors.add(new int[]{newX, newY});
-                            counts[getPiece(newX, newY)]++;
+                            counts[getStone(newX, newY)]++;
                         }
                     }
                 }
@@ -416,20 +416,20 @@ public class Game {
      */
 
     public void colorTerritory(List<int[]> territory, int color){
-        for(int[] element: territory) addPiece(element[0], element[1], color);
+        for(int[] element: territory) addStone(element[0], element[1], color);
     }
 
     /**
-     * Getter method to retrieve a piece from coordinates.
+     * Getter method to retrieve a stone from coordinates.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
-     * @return int representing the color of the piece, 0 if empty or outside the grid.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
+     * @return int representing the color of the stone, 0 if empty or outside the grid.
      */
-    public int getPiece(int X, int Y){
-        // If in grid return piece
+    public int getStone(int X, int Y){
+        // If in grid return stone
         if (checkInGrid(X, Y)){
-            return board.getPiece(X, Y);
+            return board.getStone(X, Y);
         }
 
         // Else return empty
@@ -438,25 +438,25 @@ public class Game {
     }
 
     /**
-     * Setter method to add a piece at the specified position.
+     * Setter method to add a stone at the specified position.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
-     * @param color representing the color of the piece.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
+     * @param color representing the color of the stone.
      */
-    public void addPiece(int X, int Y, int color){
-        board.addPiece(X, Y, color);
+    public void addStone(int X, int Y, int color){
+        board.addStone(X, Y, color);
     }
 
     /**
-     * Method to invert the single initial black piece if the pie rule is invoked.
+     * Method to invert the single initial black stone if the pie rule is invoked.
      */
-    public void changePiecePieRule(){
+    public void changeStonePieRule(){
         outerloop:
         for(int i = 0; i < size ; i++) {
             for (int j = 0; j < size; j++) {
-                if (getPiece(i,j) == 1) {
-                    addPiece(i, j, 2);
+                if (getStone(i,j) == 1) {
+                    addStone(i, j, 2);
                     break outerloop;
                 }
             }

@@ -11,10 +11,10 @@ public class Board {
     /**
      * Constructor method to create a new Board object.
      *
-     * @param size integer indicating the number of intersections where to place pawns.
+     * @param size integer indicating the number of intersections where to place stones.
      */
     public Board(int size){
-        // size = number of intersections (per side) where to place pawns
+        // size = number of intersections (per side) where to place stones
         // initialize grid elements to 0
         grid = new int[size][size];
     }
@@ -38,24 +38,24 @@ public class Board {
     }
 
     /**
-     * Getter method to retrieve the piece at the specified position on the game board.
+     * Getter method to retrieve the stone at the specified position on the game board.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
-     * @return int representing the value of the piece at the specified position.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
+     * @return int representing the value of the stone at the specified position.
      */
-    public int getPiece(int X, int Y){
+    public int getStone(int X, int Y){
         return grid[X][Y];
     }
 
     /**
-     * Setter method to add a piece at the specified position.
+     * Setter method to add a stone at the specified position.
      *
-     * @param X int representing the x position of the piece.
-     * @param Y int representing the y position of the piece.
-     * @param color representing the color of the piece to place at the specified position.
+     * @param X int representing the x position of the stone.
+     * @param Y int representing the y position of the stone.
+     * @param color representing the color of the stone to place at the specified position.
      */
-    public void addPiece(int X, int Y, int color){
+    public void addStone(int X, int Y, int color){
         grid[X][Y] = color;
     }
 

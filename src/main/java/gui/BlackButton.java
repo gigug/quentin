@@ -19,6 +19,6 @@ public class BlackButton extends JButton{
         // Set style
         setBackground(Color.BLACK);
         setForeground(Color.WHITE);
-        setFont(StartGUI.FONT_SMALL);
+        setFont(GameGUI.FONT_SMALL);
     }
 }
