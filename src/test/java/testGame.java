@@ -161,21 +161,13 @@ public class testGame {
 
         // check that the region is a territory
         testGame.findRegions(false);
-        testGame.checkTerritories();
+        testGame.validateTerritories();
+        testGame.findTerritoryColors();
 
         List<int[]> territoryPredicted = testGame.getTerritories().get(0);
         int[] territoryElementPredicted = territoryPredicted.get(0);
 
         assertArrayEquals(territoryElementPredicted, territoryElement);
-
-        // check that the color is correct
-        int color = 1;
-
-        testGame.findTerritoryColors();
-
-        int territoryColorPredicted = testGame.getTerritoryColors().get(0);
-
-        assertEquals(color, territoryColorPredicted);
     }
 
     @Test

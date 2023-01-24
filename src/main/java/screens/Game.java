@@ -40,8 +40,7 @@ public class Game {
     private List<List<int[]>> regions = new ArrayList<>();
     private List<List<int[]>> chains = new ArrayList<>();
     private List<List<int[]>> territories = new ArrayList<>();
-    private List<Integer> territoryColors = new ArrayList<>();
-    private Stack<int[][]> previousGridStack = new Stack<int[][]>();
+    private final Stack<int[][]> previousGridStack = new Stack<int[][]>();
 
     // Initialize directions used in the class methods
     int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
@@ -132,35 +131,21 @@ public class Game {
      */
     public boolean checkDiagonal(int X, int Y) {
 
-        int newX;
-        int newY;
-        boolean valid = false;
-        boolean allDifferent = true;
+        int newX, newY;
+        boolean valid = true;
 
         // Loop over diagonal directions
-        for (int i = 0; i < 4; i++) {
+        for (int[] dir : directionsDiagonal) {
+            newX = X + dir[0];
+            newY = Y + dir[1];
 
-            // Diagonal coordinate to check
-            newX = X + directionsDiagonal[i][0];
-            newY = Y + directionsDiagonal[i][1];
-
-            // Check if piece is in grid and has the same color as current player
-            if (getPiece(newX, newY) == getCurrentPlayer() && checkInGrid(newX, newY)) {
-                allDifferent = false;
-                // Check orthogonally adjacent positions
-                if (getPiece(newX, Y) == getCurrentPlayer() || getPiece(X, newY) == getCurrentPlayer()) {
-                    valid = true;
-                    break;
-                }
+            // Check if piece has the same color as current player while the orthogonal ones are different
+            if (getPiece(newX, newY) == getCurrentPlayer() && getPiece(newX, Y) != getCurrentPlayer() && getPiece(X, newY) != getCurrentPlayer()) {
+                valid = false;
+                break;
             }
-
-        }
-        // If no diagonally adjacent neighbors share the color, move is leaal
-        if (allDifferent) {
-            return true;
         }
 
-        // If any diagonally adjacent neighbor shares the color, return valid variable
         return valid;
     }
 
@@ -195,20 +180,6 @@ public class Game {
     }
 
     /**
-     * Method to check if territories have formed and color them.
-     */
-    public void checkTerritories(){
-        // Transform valid regions into territories
-        validateTerritories();
-
-        // Find territory colors
-        findTerritoryColors();
-
-        // Color them
-        colorTerritories();
-    }
-
-    /**
      * Method to check if any chain reaches from one side of the grid to the other.
      */
     public void checkChains(){
@@ -230,32 +201,20 @@ public class Game {
             // Iterate over elements of chain
             for (int[] element : chain) {
                 color = getPiece(element[0], element[1]);
-                if (element[0] == 0) {
-                    N = true;
-                }
-                if (element[0] == size - 1) {
-                    S = true;
-                }
-                if (element[1] == 0) {
-                    E = true;
-                }
-                if (element[1] == size - 1) {
-                    W = true;
-                }
+                if (element[0] == 0) N = true;
+                if (element[0] == size - 1) S = true;
+                if (element[1] == 0) E = true;
+                if (element[1] == size - 1) W = true;
             }
 
             // If chain touches opposite sides, assign winner and finish game
             if ((N && S) || (E && W)) {
                 // Pawns belonging to the winning chains are colored differently to highlight them graphically
                 colorToUse = (color == 1) ? 3 : 4;
-                for (int[] element : chain) {
-                    addPiece(element[0], element[1], colorToUse);
-                }
+                for (int[] element : chain) addPiece(element[0], element[1], colorToUse);
 
                 // If no winners up to this point, add winner
-                if (winners.size() == 0){
-                    winners.add(color);
-                }
+                if (winners.size() == 0) winners.add(color);
                 // If two different winners, add second winner and break loop
                 else if(winners.get(0) != color){
                     winners.add(color);
@@ -264,15 +223,9 @@ public class Game {
             }
         }
         // If one winner, assign winner
-        if (winners.size() == 1){
-            setWinner(winners.get(0));
-            setFinished(true);
-        }
+        if (winners.size() == 1) setWinner(winners.get(0));
         // If two winners, assign tie
-        else if(winners.size() == 2){
-            setWinner(0);
-            setFinished(true);
-        }
+        else if(winners.size() == 2) setWinner(0);
     }
 
     /**
@@ -292,10 +245,7 @@ public class Game {
                     }
                 }
             }
-            if (isFull && !isFinished()) {
-                setFinished(true);
-                setWinner(0);
-            }
+            if (isFull && !isFinished()) setWinner(0);
         }
     }
 
@@ -314,27 +264,15 @@ public class Game {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (!visited[i][j]){
-                    if (chains && !checkEmpty(i, j)){
-                        // Start a new chain
-                        List<int[]> chain = new ArrayList<>();
-
-                        // Get color of the piece
+                    // Start a new chain or region
+                    List<int[]> region = new ArrayList<>();
+                    if (chains && !checkEmpty(i, j)) {
                         color = getPiece(i, j);
-
-                        // Explore chain
-                        exploreRegion(i, j, visited, chain, chains, color);
-
-                        // Add to list of chains
-                        addChain(chain);
+                        exploreRegion(i, j, visited, region, true, color);
+                        addChain(region);
                     }
-                    else if(!chains && checkEmpty(i, j)){
-                        // Start a new region
-                        List<int[]> region = new ArrayList<>();
-
-                        // Color is not important
-                        exploreRegion(i, j, visited, region, chains, color);
-
-                        // Add to region
+                    else if (!chains && checkEmpty(i, j)) {
+                        exploreRegion(i, j, visited, region, false, color);
                         addRegion(region);
                     }
                 }
@@ -388,7 +326,6 @@ public class Game {
         regions = new ArrayList<>();
         chains = new ArrayList<>();
         territories = new ArrayList<>();
-        territoryColors = new ArrayList<>();
     }
 
     /**
@@ -396,12 +333,14 @@ public class Game {
      */
     public void validateTerritories(){
 
+        int newX, newY, neighbors;
+        boolean valid;
+
         // Iterate over regions
         for(List<int[]> region: getRegions()){
 
             // Indicates if region is territory
-            boolean valid = true;
-            int newX, newY, neighbors;
+            valid = true;
 
             // Iterate over elements
             for(int[] element: region){
@@ -435,6 +374,8 @@ public class Game {
 
         int newX, newY;
         boolean found;
+        int[] counts = new int[3];
+        int color;
 
         // Iterate over territories
         for(List<int[]> territory: getTerritories()){
@@ -451,81 +392,31 @@ public class Game {
 
                         // Check if coordinate was already included
                         for(int[] neighbor: listOccupiedNeighbors){
-                            if (Arrays.equals(neighbor, new int[]{newX, newY})){
-                                found = true;
-                                break;
-                            }
+                            if (Arrays.equals(neighbor, new int[]{newX, newY})) found = true;
                         }
-                        if (!found){
-                            listOccupiedNeighbors.add(new int[] {newX, newY});
+                        if (!found) {
+                            listOccupiedNeighbors.add(new int[]{newX, newY});
+                            counts[getPiece(newX, newY)]++;
                         }
                     }
                 }
             }
 
-            countNeighbors(listOccupiedNeighbors);
+            color = counts[1] > counts[2] ? 1 : 2;
+            if(counts[1] == counts[2]) color = 3 - getCurrentPlayer();
+            colorTerritory(territory, color);
         }
     }
 
     /**
-     * Count neighbors and assign a color accordingly.
+     * Color the territory.
      *
-     * @param listOccupiedNeighbors list of neighbors.
+     * @param territory list of coordinates belonging to that territory.
+     * @param color int representing the color of the territory.
      */
-    public void countNeighbors(List<int[]> listOccupiedNeighbors){
 
-        // Initialize counters
-        int blackCounter = 0;
-        int whiteCounter = 0;
-
-        // Iterate over neighbors
-        for (int[] neighbor: listOccupiedNeighbors){
-            if (getPiece(neighbor[0], neighbor[1]) == 1){
-                blackCounter += 1;
-            }
-            else{
-                whiteCounter += 1;
-            }
-        }
-
-        // Assign:
-        // 0: equal
-        // 1: black
-        // 2: white
-
-        if (blackCounter > whiteCounter){
-            addTerritoryColor(1);
-        }
-        else if (whiteCounter > blackCounter) {
-            addTerritoryColor(2);
-        }
-        else{
-            addTerritoryColor(0);
-        }
-    }
-
-    /**
-     * Method to add pieces to complete a territory according to its color.
-     */
-    public void colorTerritories(){
-        int color;
-
-        // Iterate over territories
-        for(int i = 0; i < getTerritories().size(); i++){
-            color = getTerritoryColors().get(i);
-
-            // Iterate over elements of territory
-            for(int[] element: getTerritories().get(i)){
-
-                if (color == 0){
-                    addPiece(element[0], element[1], getOppositePlayer());
-                }
-                else{
-                    addPiece(element[0], element[1], color);
-                }
-            }
-
-        }
+    public void colorTerritory(List<int[]> territory, int color){
+        for(int[] element: territory) addPiece(element[0], element[1], color);
     }
 
     /**
@@ -533,7 +424,7 @@ public class Game {
      *
      * @param X int representing the x position of the piece.
      * @param Y int representing the y position of the piece.
-     * @return int representing the color of the piece, 0 if empty.
+     * @return int representing the color of the piece, 0 if empty or outside the grid.
      */
     public int getPiece(int X, int Y){
         // If in grid return piece
@@ -600,15 +491,6 @@ public class Game {
     }
 
     /**
-     * Setter method to add a territory color to the list of territory colors.
-     *
-     * @param territoryColor int indicating the color to add.
-     */
-    public void addTerritoryColor(int territoryColor){
-        territoryColors.add(territoryColor);
-    }
-
-    /**
      * Getter method to retrieve the finished attribute.
      *
      * @return finished boolean.
@@ -618,21 +500,13 @@ public class Game {
     }
 
     /**
-     * Setter method for finished.
-     *
-     * @param finished boolean indicating whether the game is finished.
-     */
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-
-    /**
      * Setter method for winner.
      *
      * @param winner int indicating the winner of the game.
      */
     public void setWinner(int winner) {
         this.winner = winner;
+        this.finished = true;
     }
 
     /**
@@ -722,15 +596,6 @@ public class Game {
     }
 
     /**
-     * Getter method to retrieve the list of territories colors.
-     *
-     * @return territoriesColors List<Integer>.
-     */
-    public List<Integer> getTerritoryColors(){
-        return territoryColors;
-    }
-
-    /**
      * Getter method to retrieve the grid.
      *
      * @return grid int[][].
@@ -763,25 +628,13 @@ public class Game {
      */
     public void progress(){
 
-        // Increment the turn counter
         increaseTurn();
-
-        // Find regions
         findRegions(false);
-
-        // Check if regions are territories and color them
-        checkTerritories();
-
-        // check for win
+        validateTerritories();
+        findTerritoryColors();
         checkWin();
-
-        // Check for tie
         checkTie();
-
-        // Reset regions, chains, territories and their colors
         emptyRegions();
-
-        // Set next player
         switchPlayer();
     }
 
