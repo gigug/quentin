@@ -28,7 +28,6 @@ public class Game {
 
     // If the game is finished or not
     private boolean finished;
-    private boolean pieRuleApplied = false;
 
     // Declare the board
     private final Board board;
@@ -134,7 +133,6 @@ public class Game {
         int newX, newY;
         boolean valid = true;
 
-        // Loop over diagonal directions
         for (int[] dir : directionsDiagonal) {
             newX = X + dir[0];
             newY = Y + dir[1];
@@ -193,8 +191,6 @@ public class Game {
         // Booleans indicating whether a chain touches any side of the grid
         boolean N, E, S, W;
 
-        // Iterate over chains
-        outerloop:
         for(List<int[]> chain: chains) {
             N = E = S = W = false;
 
@@ -218,7 +214,7 @@ public class Game {
                 // If two different winners, add second winner and break loop
                 else if(winners.get(0) != color){
                     winners.add(color);
-                    break outerloop;
+                    break;
                 }
             }
         }
@@ -305,10 +301,9 @@ public class Game {
 
         int newX, newY;
 
-        for (int dir = 0; dir < 4; dir++){
-
-            newX = X + directions[dir][0];
-            newY = Y + directions[dir][1];
+        for (int[] dir: directions) {
+            newX = X + dir[0];
+            newY = Y + dir[1];
 
             // Explore coordinates not yet visited
             if (checkInGrid(newX, newY)){
@@ -346,13 +341,11 @@ public class Game {
             for(int[] element: region){
                 neighbors = 0;
 
-                for(int dir = 0; dir < 4; dir ++) {
-                    newX = element[0] + directions[dir][0];
-                    newY = element[1] + directions[dir][1];
+                for (int[] dir: directions) {
+                    newX = element[0] + dir[0];
+                    newY = element[1] + dir[1];
 
-                    if (checkInGrid(newX, newY) && !checkEmpty(newX, newY)){
-                        neighbors += 1;
-                    }
+                    if (checkInGrid(newX, newY) && !checkEmpty(newX, newY)) neighbors += 1;
                 }
                 if (neighbors < 2){
                     valid = false;
@@ -361,9 +354,7 @@ public class Game {
             }
 
             // Promote region to territory
-            if (valid){
-                addTerritory(region);
-            }
+            if (valid) addTerritory(region);
         }
     }
 
@@ -372,28 +363,23 @@ public class Game {
      */
     public void findTerritoryColors(){
 
-        int newX, newY;
         boolean found;
         int[] counts = new int[3];
         int color;
 
-        // Iterate over territories
         for(List<int[]> territory: getTerritories()){
             List<int[]> listOccupiedNeighbors = new ArrayList<>();
 
             // Iterate over elements of territory to find every neighbor
             for(int[] element: territory){
-                for(int dir = 0; dir < 4; dir ++){
-                    newX = element[0] + directions[dir][0];
-                    newY = element[1] + directions[dir][1];
+
+                for (int[] dir: directions) {
+                    final int newX = element[0] + dir[0];
+                    final int newY = element[1] + dir[1];
 
                     if (checkInGrid(newX, newY) && !checkEmpty(newX, newY)){
-                        found = false;
-
                         // Check if coordinate was already included
-                        for(int[] neighbor: listOccupiedNeighbors){
-                            if (Arrays.equals(neighbor, new int[]{newX, newY})) found = true;
-                        }
+                        found = listOccupiedNeighbors.stream().anyMatch(neighbor -> Arrays.equals(neighbor, new int[]{newX, newY}));
                         if (!found) {
                             listOccupiedNeighbors.add(new int[]{newX, newY});
                             counts[getStone(newX, newY)]++;
@@ -428,9 +414,7 @@ public class Game {
      */
     public int getStone(int X, int Y){
         // If in grid return stone
-        if (checkInGrid(X, Y)){
-            return board.getStone(X, Y);
-        }
+        if (checkInGrid(X, Y)) return board.getStone(X, Y);
 
         // Else return empty
         return 0;
@@ -461,9 +445,7 @@ public class Game {
                 }
             }
         }
-
-        pieRuleApplied = true;
-    };
+    }
 
     /**
      * Setter method to add a region to the list of regions.
