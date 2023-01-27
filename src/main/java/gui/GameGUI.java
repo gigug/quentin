@@ -4,8 +4,6 @@ import screens.Game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -31,7 +29,7 @@ public class GameGUI extends JFrame{
     private final static int PANEL_WIDTH = 30;
     private final static Insets INSETS = new Insets(5, 0, 5, 0);
     // CardLayout that will be used to switch between different panels
-    private final static CardLayout CARDS = new CardLayout();
+    public final CardLayout CARDS = new CardLayout();
     private final static GridBagLayout GRID_BAG_LAYOUT = new GridBagLayout();
 
     private Game game;
@@ -57,7 +55,7 @@ public class GameGUI extends JFrame{
         StartMenuPanel startMenuPanel = new StartMenuPanel();
         SelectSizePanel selectSizePanel = new SelectSizePanel();
 
-        MenuBar menuBar = new MenuBar();
+        MenuBar menuBar = new MenuBar(this);
 
         // Initialize cards
         contentPane.setLayout(CARDS);
@@ -423,6 +421,7 @@ public class GameGUI extends JFrame{
     private class ClickablePanel extends JPanel{
 
         final Dimension internalBoardDimension;
+        final int internalBoardWidth;
         /**
          * Default constructor for ClickablePanel.
          */
@@ -432,12 +431,12 @@ public class GameGUI extends JFrame{
             setOpaque(false);
 
             // Set preferred size for button placement grid
-            internalBoardDimension = new Dimension(PANEL_WIDTH * (size), PANEL_WIDTH * (size));
+            internalBoardWidth = PANEL_WIDTH * (size);
+            internalBoardDimension = new Dimension(internalBoardWidth, internalBoardWidth);
             setPreferredSize(internalBoardDimension);
 
-            setLayout(new GridLayout(size, size));
-
             if (!game.isFinished()){
+                setLayout(new GridLayout(size, size));
                 // Create an array to hold the chessboard squares
                 JButton[][] squares = new JButton[size][size];
 
@@ -516,45 +515,7 @@ public class GameGUI extends JFrame{
         }
     }
 
-    /**
-     * MenuBar class.
-     */
-    private class MenuBar extends JMenuBar {
 
-        /**
-         * Default constructor for MenuBar.
-         */
-        private MenuBar(){
-            super();
-
-            final JMenu fileMenu = new JMenu("File");
-
-            // New game item
-            final JMenuItem newGameMenuItem = new JMenuItem("New Game");
-            newGameMenuItem.addActionListener(e -> CARDS.show(contentPane, "selectSizePanel"));
-
-            // load game item
-            final JMenuItem loadGameMenuItem = new JMenuItem("Load Game");
-            loadGameMenuItem.addActionListener(e -> {
-
-                // Load game
-                loadGame();
-
-                // Create new game card
-                createGameCard();
-            });
-
-            // Exit program item
-            final JMenuItem exitMenuItem = new JMenuItem("Exit");
-            exitMenuItem.addActionListener(e -> System.exit(0));
-
-            fileMenu.add(newGameMenuItem);
-            fileMenu.add(loadGameMenuItem);
-            fileMenu.add(exitMenuItem);
-
-            add(fileMenu);
-        }
-    }
 
     /**
      * Method to initialize the game given size of the board.
@@ -569,7 +530,7 @@ public class GameGUI extends JFrame{
     /**
      * Method to recreate the board panel when needed.
      */
-    private void createGameCard(){
+    void createGameCard(){
         boardPanel = new BoardPanel();
         contentPane.add("boardPanel", boardPanel);
         CARDS.show(contentPane, "boardPanel");
@@ -619,7 +580,7 @@ public class GameGUI extends JFrame{
      * Loads, in order: size, grid, current player and turn.
      * Loads from a file with extension .game.
      */
-    private void loadGame() {
+    void loadGame() {
         // Setup JFileChooser
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Load Game");
