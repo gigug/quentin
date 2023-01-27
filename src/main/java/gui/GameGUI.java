@@ -102,10 +102,7 @@ public class GameGUI extends JFrame{
             // Load game
             BlackButton loadGameButton = new BlackButton("Load game");
             loadGameButton.addActionListener(e -> {
-                // Load game
                 loadGame();
-
-                // Create new game card
                 createGameCard();
             });
 
@@ -159,13 +156,13 @@ public class GameGUI extends JFrame{
             setBackground(BACKGROUND_COLOR_2);
 
             BlackButton size7Button = new BlackButton("7x7");
-            size7Button.addActionListener(new sizeSelectionActionListener(8));
+            size7Button.addActionListener(e->selectSize(8));
 
             BlackButton size9Button = new BlackButton("9x9");
-            size9Button.addActionListener(new sizeSelectionActionListener(10));
+            size9Button.addActionListener(e->selectSize(10));
 
             BlackButton size11Button = new BlackButton("11x11");
-            size11Button.addActionListener(new sizeSelectionActionListener(12));
+            size11Button.addActionListener(e->selectSize(12));
 
             GridBagConstraints gbc = new GridBagConstraints();
 
@@ -557,25 +554,6 @@ public class GameGUI extends JFrame{
 
             add(fileMenu);
         }
-    }
-
-    /**
-     * Custom action listener class used in the buttons for size selection.
-     */
-    private class sizeSelectionActionListener implements ActionListener {
-
-        private final int size;
-
-        /**
-         * Constructor for the sizeSelectionActionListener class.
-         *
-         * @param size int representing the size of the grid.
-         */
-        private sizeSelectionActionListener(int size){
-            this.size = size;
-        }
-        @Override
-        public void actionPerformed(ActionEvent e) {selectSize(size);}
     }
 
     /**
