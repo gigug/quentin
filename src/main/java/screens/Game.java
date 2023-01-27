@@ -172,7 +172,6 @@ public class Game {
      * Method to check if the game has been won.
      */
     public void checkWin(){
-        // Find chains
         findRegions(true);
         checkChains();
     }
@@ -606,10 +605,11 @@ public class Game {
     }
 
     /**
-     * Method to carry out every action needed at the end of a turn.
+     * Method to carry out the sequence of actions needed at the end of a turn.
      */
-    public void progress(){
-
+    public void progress(int X, int Y){
+        addStack();
+        addStone(X, Y, getCurrentPlayer());
         increaseTurn();
         findRegions(false);
         validateTerritories();
@@ -620,5 +620,13 @@ public class Game {
         switchPlayer();
     }
 
-
+    /**
+     * Method to apply the sequence of actions needed for the pie rule.
+     */
+    public void pieRule() {
+        addStack();
+        changeStonePieRule();
+        increaseTurn();
+        switchPlayer();
+    }
 }

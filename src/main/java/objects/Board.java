@@ -14,8 +14,6 @@ public class Board {
      * @param size integer indicating the number of intersections where to place stones.
      */
     public Board(int size){
-        // size = number of intersections (per side) where to place stones
-        // initialize grid elements to 0
         grid = new int[size][size];
     }
 

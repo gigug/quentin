@@ -232,10 +232,7 @@ public class GameGUI extends JFrame{
 
             BlackButton pieRuleButton = new BlackButton("Switch sides");
             pieRuleButton.addActionListener(e -> {
-                game.addStack();
-                game.changeStonePieRule();
-                game.increaseTurn();
-                game.switchPlayer();
+                game.pieRule();
                 createGameCard();
             });
             pieRuleButton.setEnabled(false);
@@ -254,7 +251,7 @@ public class GameGUI extends JFrame{
             saveGameMenuButton.addActionListener(e -> saveGame());
             buttonPanel.add(saveGameMenuButton);
 
-            // Disable undoButton at the beginning and at the end
+            // Disable undoButton at the beginning and at the end of the game
             if (game.getTurn() == 0 || game.isFinished()) undoButton.setEnabled(false);
             // During the second turn, the pie rule can be invoked by the white player
             if (game.getTurn() == 1) pieRuleButton.setEnabled(true);
@@ -458,9 +455,7 @@ public class GameGUI extends JFrame{
                         button.addActionListener(e -> {
                             // If move is doable, add stone and progress
                             if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
-                                game.addStack();
-                                game.addStone(finalCol, finalRow, game.getCurrentPlayer());
-                                game.progress();
+                                game.progress(finalCol, finalRow);
                                 boardPanel.setTurnLabel();
                             }
                             // If special case, recreate board to allow for new buttons
@@ -514,8 +509,6 @@ public class GameGUI extends JFrame{
             }
         }
     }
-
-
 
     /**
      * Method to initialize the game given size of the board.
