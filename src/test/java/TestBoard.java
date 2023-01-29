@@ -3,6 +3,7 @@ import objects.Board;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import screens.Game;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +19,25 @@ class TestBoard {
                             {0, 0, 0},
                             {0, 0, 0}};
         assertArrayEquals(testBoard.getGrid(), testGrid);
+    }
+
+    @Test
+    void testCheckInGrid(){
+        int testSize = 2;
+        Board testBoard = new Board(testSize);
+
+        assertTrue(testBoard.checkInGrid(0,0));
+        assertFalse(testBoard.checkInGrid(2,2));
+    }
+
+    @Test
+    void testCheckEmpty(){
+        int testSize = 2;
+        Board testBoard = new Board(testSize);
+
+        assertTrue(testBoard.checkEmpty(0,0));
+        testBoard.addStone(1,1, 1);
+        assertFalse(testBoard.checkEmpty(1,1));
     }
 
     @ParameterizedTest

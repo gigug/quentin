@@ -7,12 +7,12 @@ import javax.swing.*;
  *
  * @author Gianluca Guglielmo
  */
-public class TitleLabel extends JLabel {
+class TitleLabel extends JLabel {
 
     /**
      * Default constructor for the class Label.
      */
-    public TitleLabel(){
+    TitleLabel(){
         super();
         setFont(GameGUI.FONT_BIG);
         setForeground(GameGUI.FONT_COLOR);
@@ -23,7 +23,7 @@ public class TitleLabel extends JLabel {
      *
      * @param text string representing the text to be displayed.
      */
-    public TitleLabel(String text) {
+    TitleLabel(String text) {
         this();
         setText(text);
     }

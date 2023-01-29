@@ -1,3 +1,5 @@
+import objects.Board;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -11,18 +13,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestGame {
 
+    private int testSize;
+    private Game testGame;
+    private Board testBoard;
+
+    @AfterEach
+    public void tearDown(){
+        testGame = null;
+        testBoard = null;
+    }
+
     @Test
     void testPassable(){
-        // the following configuration of stones has to be passable
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testBoard = new Board(testSize);
+        testGame = new Game(testSize);
 
-        // add black stone
-        testGame.addStone(0, 0, 1);
+        testBoard.addStone(0, 0, 1);
+        testBoard.addStone(1, 0, 2);
+        testBoard.addStone(0, 1, 2);
 
-        // add white stones
-        testGame.addStone(1, 0, 2);
-        testGame.addStone(0, 1, 2);
+        testGame.loadGrid(testBoard.getGrid());
 
         assertTrue(testGame.checkPassable());
     }
@@ -30,134 +41,102 @@ class TestGame {
     @ParameterizedTest
     @CsvSource({"0,0","0,2","2,2","2,0"})
     void testCheckDiagonalFalse(int posX, int posY){
-        // the following configuration of stones has to return false for checkDiagonal
-        int testSize = 3;
-        Game testGame = new Game(testSize);
+        testSize = 3;
+        testBoard = new Board(testSize);
+        testGame = new Game(testSize);
 
-        // add black stone
-        testGame.addStone(1, 1, 1);
+        testBoard.addStone(1, 1, 1);
 
+        testGame.loadGrid(testBoard.getGrid());
         assertFalse(testGame.checkDiagonal(posX, posY));
     }
 
     @ParameterizedTest
     @CsvSource({"0,0","1,2","2,1"})
     void testCheckDiagonalTrue(int posX, int posY){
-        // the following configuration of stones has to return false for checkDiagonal
-        int testSize = 3;
-        Game testGame = new Game(testSize);
+        testSize = 3;
+        testBoard = new Board(testSize);
+        testGame = new Game(testSize);
 
-        // add black stones
-        testGame.addStone(1, 1, 1);
-        testGame.addStone(1, 0, 1);
+        testBoard.addStone(1, 1, 1);
+        testBoard.addStone(1, 0, 1);
+
+        testGame.loadGrid(testBoard.getGrid());
 
         assertTrue(testGame.checkDiagonal(posX, posY));
     }
 
     @Test
     void testGetCurrentPlayer(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
 
-        // check black
         assertEquals(PlayerColor.BLACK, testGame.getCurrentPlayer());
 
-        // switch to white
         testGame.switchPlayer();
         assertEquals(PlayerColor.WHITE, testGame.getCurrentPlayer());
     }
 
     @Test
     void testGetOppositePlayer(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
 
-        // check white
         assertEquals(2, testGame.getOppositePlayer());
-
-        // switch to white
-        // check black
         testGame.switchPlayer();
         assertEquals(1, testGame.getOppositePlayer());
     }
 
     @Test
-    void testCheckInGrid(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
-
-        // true
-        assertTrue(testGame.checkInGrid(0,0));
-
-        // false
-        assertFalse(testGame.checkInGrid(2,2));
-    }
-
-    @Test
-    void testCheckEmpty(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
-
-        // true
-        assertTrue(testGame.checkEmpty(0,0));
-
-        // add stone
-        testGame.addStone(1,1, 1);
-
-        // false
-        assertFalse(testGame.checkEmpty(1,1));
-    }
-
-    @Test
     void testCheckPassable(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        // add stones
-        testGame.addStone(0,0, 1);
-        testGame.addStone(0,1, 1);
-        testGame.addStone(1,0, 1);
-        testGame.addStone(1,1, 1);
+        testBoard.addStone(0,0, 1);
+        testBoard.addStone(0,1, 1);
+        testBoard.addStone(1,0, 1);
+        testBoard.addStone(1,1, 1);
 
-        // true
+        testGame.loadGrid(testBoard.getGrid());
         assertTrue(testGame.checkPassable());
     }
 
     @Test
     void testFindRegions(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        // add black stones
-        testGame.addStone(0,0, 1);
-        testGame.addStone(0,1, 1);
-        testGame.addStone(1,0, 1);
+        testBoard.addStone(0,0, 1);
+        testBoard.addStone(0,1, 1);
+        testBoard.addStone(1,0, 1);
 
+        testGame.loadGrid(testBoard.getGrid());
         testGame.findRegions(false);
 
-        // region
         int[] regionElement = {1, 1};
 
         List<List<int[]>> regionsPredicted = testGame.getRegions();
         List<int[]> regionPredicted = regionsPredicted.get(0);
         int[] regionElementPredicted = regionPredicted.get(0);
 
-        // true
         assertArrayEquals(regionElement, regionElementPredicted);
     }
 
     @Test
     void testFindTerritories(){
+        testSize = 5;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        int testSize = 5;
-        Game testGame = new Game(testSize);
+        testBoard.addStone(1, 2, 1);
+        testBoard.addStone(2, 1, 1);
+        testBoard.addStone(3, 2, 1);
+        testBoard.addStone(2, 3, 1);
 
-        testGame.addStone(1, 2, 1);
-        testGame.addStone(2, 1, 1);
-        testGame.addStone(3, 2, 1);
-        testGame.addStone(2, 3, 1);
+        testGame.loadGrid(testBoard.getGrid());
 
-        // region
         int[] territoryElement = {2,2};
 
         // check that the region is a territory
@@ -173,15 +152,17 @@ class TestGame {
 
     @Test
     void testFindRegionsChain(){
-        int testSize = 5;
-        Game testGame = new Game(testSize);
+        testSize = 5;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        // add black stones
-        testGame.addStone(0,0, 1);
-        testGame.addStone(0,1, 1);
-        testGame.addStone(0,2, 1);
-        testGame.addStone(0,3, 1);
-        testGame.addStone(0,4, 1);
+        testBoard.addStone(0,0, 1);
+        testBoard.addStone(0,1, 1);
+        testBoard.addStone(0,2, 1);
+        testBoard.addStone(0,3, 1);
+        testBoard.addStone(0,4, 1);
+
+        testGame.loadGrid(testBoard.getGrid());
 
         // region
         List<int[]> chain = new ArrayList<int[]>();
@@ -211,64 +192,69 @@ class TestGame {
 
     @Test
     void testChangeStonePieRule(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
         int[][] testGrid = {{2,0}, {0,0}};
 
-        // add black stone
-        testGame.addStone(0,0, 1);
+        testBoard.addStone(0,0, 1);
+        testBoard.changeStonePieRule();
 
-        // call pie rule
-        testGame.changeStonePieRule();
+        testGame.loadGrid(testBoard.getGrid());
 
-        // true
         assertArrayEquals(testGame.getGrid(), testGrid);
     }
 
     @Test
     void testCheckWin(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        testGame.addStone(0,0, 1);
-        testGame.addStone(0,1, 1);
+        testBoard.addStone(0,0, 1);
+        testBoard.addStone(0,1, 1);
+
+        testGame.loadGrid(testBoard.getGrid());
 
         // check win
         testGame.checkWin();
 
-        assertTrue(testGame.isFinished());
+        assertTrue(testGame.isGameFinished());
         assertEquals(1, testGame.getWinner());
     }
 
     @Test
     void testCheckWinFalse(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        testGame.addStone(0,0, 1);
-        testGame.addStone(0,1, 2);
+        testBoard.addStone(0,0, 1);
+        testBoard.addStone(0,1, 2);
 
-        // check win
+        testGame.loadGrid(testBoard.getGrid());
         testGame.checkWin();
 
-        assertFalse(testGame.isFinished());
+        assertFalse(testGame.isGameFinished());
     }
 
     @Test
     void testCheckTie(){
-        int testSize = 2;
-        Game testGame = new Game(testSize);
+        testSize = 2;
+        testGame = new Game(testSize);
+        testBoard = new Board(testSize);
 
-        testGame.addStone(0,0, 1);
-        testGame.addStone(1,1, 1);
-        testGame.addStone(0,1, 2);
-        testGame.addStone(1,0, 2);
+        testBoard.addStone(0,0, 1);
+        testBoard.addStone(1,1, 1);
+        testBoard.addStone(0,1, 2);
+        testBoard.addStone(1,0, 2);
 
-        // check tie
+        testGame.loadGrid(testBoard.getGrid());
+
         testGame.checkWin();
         testGame.checkTie();
 
-        assertTrue(testGame.isFinished());
+        assertTrue(testGame.isGameFinished());
         assertEquals(0, testGame.getWinner());
     }
 }

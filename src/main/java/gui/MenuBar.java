@@ -7,7 +7,7 @@ import javax.swing.*;
  *
  * @author Gianluca Guglielmo
  */
-public class MenuBar extends JMenuBar {
+class MenuBar extends JMenuBar {
 
     /**
      * Default constructor for MenuBar.
@@ -17,18 +17,15 @@ public class MenuBar extends JMenuBar {
 
         final JMenu fileMenu = new JMenu("File");
 
-        // New game item
         final JMenuItem newGameMenuItem = new JMenuItem("New Game");
         newGameMenuItem.addActionListener(e -> gameGUI.CARDS.show(gameGUI.getContentPane(), "selectSizePanel"));
 
-        // load game item
         final JMenuItem loadGameMenuItem = new JMenuItem("Load Game");
         loadGameMenuItem.addActionListener(e -> {
             gameGUI.loadGame();
             gameGUI.createGameCard();
         });
 
-        // Exit program item
         final JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(e -> System.exit(0));
 

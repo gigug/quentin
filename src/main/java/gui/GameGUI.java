@@ -1,5 +1,6 @@
 package gui;
 
+import objects.FrozenBoard;
 import players.PlayerColor;
 import screens.Game;
 
@@ -265,13 +266,13 @@ public class GameGUI extends JFrame{
             buttonPanel.add(saveGameMenuButton);
 
             // Disable undoButton at the beginning and at the end of the game
-            if (game.getTurn() == 0 || game.isFinished()) undoButton.setEnabled(false);
+            if (game.getTurn() == 0 || game.isGameFinished()) undoButton.setEnabled(false);
             // During the second turn, the pie rule can be invoked by the white player
             if (game.getTurn() == 1) pieRuleButton.setEnabled(true);
             // Enable passableButton when necessary
-            if (game.checkPassable() && !game.isFinished()) passableButton.setEnabled(true);
+            if (game.checkPassable() && !game.isGameFinished()) passableButton.setEnabled(true);
             // Disable saveGame at the end of the game
-            if (game.isFinished()) saveGameMenuButton.setEnabled(false);
+            if (game.isGameFinished()) saveGameMenuButton.setEnabled(false);
 
             add(buttonPanel, gbc);
         }
@@ -286,7 +287,7 @@ public class GameGUI extends JFrame{
             ImageIcon circleIcon;
 
             // Display final message if game is finished
-            if (game.isFinished()){
+            if (game.isGameFinished()){
                 if (game.getWinner() == 0){
                     text = "Tie!";
                     circleColor = Color.BLUE;
@@ -405,14 +406,15 @@ public class GameGUI extends JFrame{
             Color colorSurface = Color.GREEN;
 
             // stones
+            FrozenBoard board = game.getBoardView();
             for(int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    if (game.getStone(i,j) != 0){
-                        colorFill = (game.getStone(i, j) == 1 || game.getStone(i, j) == 3) ? Color.BLACK : Color.WHITE;
+                    if (board.getStone(i,j) != 0){
+                        colorFill = (board.getStone(i, j) == 1 || board.getStone(i, j) == 3) ? Color.BLACK : Color.WHITE;
                         g2.setColor(colorFill);
                         g2.fillOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
 
-                        if (game.getStone(i, j) > 2){
+                        if (board.getStone(i, j) > 2){
                             g2.setColor(colorSurface);
                             g2.drawOval(internalReferencePoint + PANEL_WIDTH * i - externalReferencePoint, internalReferencePoint + PANEL_WIDTH * j - externalReferencePoint, PANEL_WIDTH, PANEL_WIDTH);
                         }
@@ -444,7 +446,7 @@ public class GameGUI extends JFrame{
             internalBoardDimension = new Dimension(internalBoardWidth, internalBoardWidth);
             setPreferredSize(internalBoardDimension);
 
-            if (!game.isFinished()){
+            if (!game.isGameFinished()){
                 setLayout(new GridLayout(size, size));
                 // Create an array to hold the chessboard squares
                 JButton[][] squares = new JButton[size][size];
@@ -466,12 +468,12 @@ public class GameGUI extends JFrame{
                         final int finalCol = col;
                         button.addActionListener(e -> {
                             // If move is doable, add stone and progress
-                            if (game.checkEmpty(finalCol, finalRow) && game.checkDiagonal(finalCol, finalRow)){
+                            if (game.checkPlaceble(finalCol, finalRow)){
                                 game.progress(finalCol, finalRow);
                                 boardPanel.setTurnLabel();
                             }
                             // If special case, recreate board to allow for new buttons
-                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.isFinished()) createGameCard();
+                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.isGameFinished()) createGameCard();
                         });
 
                         // Set the hoveredRow and hoveredCol variables when the mouse enters the button
@@ -509,12 +511,8 @@ public class GameGUI extends JFrame{
 
             // Color hovered cells green if a stone can be placed there, otherwise red
             if (hoveredCol > -1) {
-                if (game.checkEmpty(hoveredCol, hoveredRow) && game.checkDiagonal(hoveredCol, hoveredRow)){
-                    g2.setColor(Color.GREEN);
-                }
-                else {
-                    g2.setColor(Color.RED);
-                }
+                if (game.checkPlaceble(hoveredCol, hoveredRow)) g2.setColor(Color.GREEN);
+                else g2.setColor(Color.RED);
                 g2.fillOval(PANEL_WIDTH * hoveredCol, PANEL_WIDTH * hoveredRow, PANEL_WIDTH, PANEL_WIDTH);
             }
         }
@@ -616,7 +614,7 @@ public class GameGUI extends JFrame{
                 setSize((int) ois.readObject());
                 setNumberTiles(size - 1);
                 game = new Game(size);
-                game.setGrid((int[][]) ois.readObject());
+                game.loadGrid((int[][]) ois.readObject());
                 game.loadCurrentPlayer((PlayerColor) ois.readObject());
                 game.setTurn((int) ois.readObject());
             } catch (IOException | ClassNotFoundException e) {
