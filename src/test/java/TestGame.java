@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import players.PlayerColor;
 import screens.Game;
 
 import java.util.*;
@@ -59,11 +60,11 @@ class TestGame {
         Game testGame = new Game(testSize);
 
         // check black
-        assertEquals(1, testGame.getCurrentPlayer());
+        assertEquals(PlayerColor.BLACK, testGame.getCurrentPlayer());
 
         // switch to white
         testGame.switchPlayer();
-        assertEquals(2, testGame.getCurrentPlayer());
+        assertEquals(PlayerColor.WHITE, testGame.getCurrentPlayer());
     }
 
     @Test

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import objects.Board;
-import players.Player;
+import players.PlayerColor;
 
 /**
  * Class that implements the board game Quentin.
@@ -15,9 +15,9 @@ import players.Player;
  */
 public class Game {
     // Declare players
-    private final Player blackPlayer = new Player(1);
-    private final Player whitePlayer = new Player(2);
-    private Player currentPlayer;
+    final static PlayerColor BLACK_PLAYER = PlayerColor.BLACK;
+    final static PlayerColor WHITE_PLAYER = PlayerColor.WHITE;
+    private PlayerColor currentPlayer;
 
     // Turn number
     private int turn;
@@ -52,9 +52,7 @@ public class Game {
     public Game(int size) {
         this.size = size;
         board = new Board(size);
-
-        // initialize first player
-        currentPlayer = blackPlayer;
+        currentPlayer = BLACK_PLAYER;
     }
 
     /**
@@ -62,8 +60,8 @@ public class Game {
      *
      * @param loadedPlayer loaded player from .game file.
      */
-    public void loadCurrentPlayer(int loadedPlayer){
-        currentPlayer = (loadedPlayer == 1) ? blackPlayer : whitePlayer;
+    public void loadCurrentPlayer(PlayerColor loadedPlayer){
+        currentPlayer = loadedPlayer;
     }
 
     /**
@@ -71,8 +69,17 @@ public class Game {
      *
      * @return color of current player.
      */
-    public int getCurrentPlayer() {
-        return currentPlayer.getColor();
+    public PlayerColor getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    /**
+     * Get current player's value.
+     *
+     * @return value of current player.
+     */
+    public int getCurrentPlayerValue() {
+        return currentPlayer.getValue();
     }
 
     /**
@@ -81,14 +88,14 @@ public class Game {
      * @return color of opposite player.
      */
     public int getOppositePlayer() {
-        return (getCurrentPlayer() == 1) ? 2:1;
+        return 3 - getCurrentPlayerValue();
     }
 
     /**
      * Switch current player with opposite player.
      */
     public void switchPlayer() {
-        currentPlayer = (getCurrentPlayer() == 1) ? whitePlayer : blackPlayer;
+        currentPlayer = (getCurrentPlayer() == BLACK_PLAYER) ? WHITE_PLAYER : BLACK_PLAYER;
     }
 
     /**
@@ -135,7 +142,7 @@ public class Game {
             newY = Y + dir[1];
 
             // Check if stone has the same color as current player while the orthogonal ones are different
-            if (getStone(newX, newY) == getCurrentPlayer() && getStone(newX, Y) != getCurrentPlayer() && getStone(X, newY) != getCurrentPlayer()) {
+            if (getStone(newX, newY) == getCurrentPlayerValue() && getStone(newX, Y) != getCurrentPlayerValue() && getStone(X, newY) != getCurrentPlayerValue()) {
                 valid = false;
                 break;
             }
@@ -152,12 +159,12 @@ public class Game {
     public boolean checkPassable() {
         boolean passable = true;
 
-        outerloop:
+        outerLoop:
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (checkDiagonal(i, j) && checkEmpty(i, j)) {
                     passable = false;
-                    break outerloop;
+                    break outerLoop;
                 }
             }
         }
@@ -228,12 +235,12 @@ public class Game {
 
         // Simply checks if there is any empty spot
         if (!isFinished()){
-            outerloop:
+            outerLoop:
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     if (getStone(i, j) == 0) {
                         isFull = false;
-                        break outerloop;
+                        break outerLoop;
                     }
                 }
             }
@@ -381,7 +388,7 @@ public class Game {
             }
 
             color = counts[1] > counts[2] ? 1 : 2;
-            if(counts[1] == counts[2]) color = 3 - getCurrentPlayer();
+            if(counts[1] == counts[2]) color = 3 - getCurrentPlayerValue();
             colorTerritory(territory, color);
         }
     }
@@ -418,10 +425,10 @@ public class Game {
      *
      * @param X int representing the x position of the stone.
      * @param Y int representing the y position of the stone.
-     * @param color representing the color of the stone.
+     * @param value representing the color of the stone.
      */
-    public void addStone(int X, int Y, int color){
-        board.addStone(X, Y, color);
+    public void addStone(int X, int Y, int value){
+        board.addStone(X, Y, value);
     }
 
     /**
@@ -600,7 +607,7 @@ public class Game {
      */
     public void progress(int X, int Y){
         addStack();
-        addStone(X, Y, getCurrentPlayer());
+        addStone(X, Y, getCurrentPlayerValue());
         increaseTurn();
         findRegions(false);
         validateTerritories();

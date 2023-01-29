@@ -1,5 +1,6 @@
 package gui;
 
+import players.PlayerColor;
 import screens.Game;
 
 import javax.swing.*;
@@ -15,7 +16,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Gianluca Guglielmo
  */
 public class GameGUI extends JFrame{
-
     // Constants
     final static Font FONT_BIG = new Font("monospaced", Font.BOLD, 35);
     final static Font FONT_SMALL = new Font("monospaced", Font.PLAIN, 20);
@@ -299,8 +299,8 @@ public class GameGUI extends JFrame{
             }
             // Display whose turn it is if game is not finished
             else{
-                text = (game.getCurrentPlayer() == 1) ? "Turn: black":"Turn: white";
-                circleColor = (game.getCurrentPlayer() == 1) ? Color.BLACK:Color.WHITE;
+                text = (game.getCurrentPlayer() == PlayerColor.BLACK) ? "Turn: black":"Turn: white";
+                circleColor = (game.getCurrentPlayer() == PlayerColor.BLACK) ? Color.BLACK:Color.WHITE;
             }
 
             // Create a new image that will hold the circle
@@ -617,7 +617,7 @@ public class GameGUI extends JFrame{
                 setNumberTiles(size - 1);
                 game = new Game(size);
                 game.setGrid((int[][]) ois.readObject());
-                game.loadCurrentPlayer((int) ois.readObject());
+                game.loadCurrentPlayer((PlayerColor) ois.readObject());
                 game.setTurn((int) ois.readObject());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

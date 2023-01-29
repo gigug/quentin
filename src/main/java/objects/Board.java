@@ -53,10 +53,10 @@ public class Board {
      *
      * @param X int representing the x position of the stone.
      * @param Y int representing the y position of the stone.
-     * @param color representing the color of the stone to place at the specified position.
+     * @param value representing the color of the stone to place at the specified position.
      */
-    public void addStone(int X, int Y, int color){
-        grid[X][Y] = color;
+    public void addStone(int X, int Y, int value){
+        grid[X][Y] = value;
     }
 
 }
