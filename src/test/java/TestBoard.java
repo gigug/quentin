@@ -6,10 +6,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestBoard {
+class TestBoard {
 
     @Test
-    public void testGrid(){
+    void testGrid(){
 
         int testSize = 3;
         Board testBoard = new Board(testSize);
@@ -22,7 +22,7 @@ public class TestBoard {
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
-    public void testGetstone(int tileId) {
+    void testGetStone(int tileId) {
         int testSize = 3;
         Board testBoard = new Board(testSize);
 

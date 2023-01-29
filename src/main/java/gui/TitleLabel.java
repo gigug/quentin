@@ -5,12 +5,12 @@ import javax.swing.*;
 /**
  * Class that implements the labels shown in the different panels of the GUI.
  */
-public class Label extends JLabel {
+public class TitleLabel extends JLabel {
 
     /**
      * Default constructor for the class Label.
      */
-    public Label(){
+    public TitleLabel(){
         super();
         setFont(GameGUI.FONT_BIG);
         setForeground(GameGUI.FONT_COLOR);
@@ -21,7 +21,7 @@ public class Label extends JLabel {
      *
      * @param text string representing the text to be displayed.
      */
-    public Label(String text) {
+    public TitleLabel(String text) {
         this();
         setText(text);
     }

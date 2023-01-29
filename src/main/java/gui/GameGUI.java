@@ -47,6 +47,9 @@ public class GameGUI extends JFrame{
 
     private BoardPanel boardPanel;
 
+    /**
+     * Constructor for the GameGUI class.
+     */
     public GameGUI(){
 
         // Initialize contentPane
@@ -84,6 +87,10 @@ public class GameGUI extends JFrame{
      * Panel that displays start menu.
      */
     private class StartMenuPanel extends JPanel{
+
+        /**
+         * Constructor for the StartMenuPanel class.
+         */
         public StartMenuPanel(){
             super();
 
@@ -118,7 +125,7 @@ public class GameGUI extends JFrame{
             gbc.insets = INSETS;
 
             // Add label to panel
-            Label label = new Label("Quentin");
+            TitleLabel label = new TitleLabel("Quentin");
             add(label, gbc);
 
             // Make buttons the same width
@@ -170,7 +177,7 @@ public class GameGUI extends JFrame{
             // Set small border between buttons
             gbc.insets = INSETS;
 
-            Label label = new Label("Select board size:");
+            TitleLabel label = new TitleLabel("Select board size:");
             add(label, gbc);
 
             // Make buttons the same width
@@ -192,7 +199,7 @@ public class GameGUI extends JFrame{
     private class BoardPanel extends JPanel{
         JPanel turnPanel = new JPanel();
         JLabel circleLabel = new JLabel();
-        Label turnLabel = new Label();
+        TitleLabel turnLabel = new TitleLabel();
 
         /**
          * Default constructor for BoardPanel.
@@ -312,28 +319,25 @@ public class GameGUI extends JFrame{
      */
     private class InternalBoardPanel extends JPanel{
         private final int boardWidth;
-        final Dimension boardDimension;
 
         /**
          * Default constructor for InternalBoardPanel.
          */
         InternalBoardPanel(){
             super();
-
             setLayout(GRID_BAG_LAYOUT);
 
-            boardDimension = new Dimension(PANEL_WIDTH * (numberTiles + 4), PANEL_WIDTH * (numberTiles + 4));
             boardWidth = PANEL_WIDTH * (numberTiles + 4);
+            Dimension boardDimension = new Dimension(boardWidth, boardWidth);
 
             setPreferredSize(boardDimension);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.fill = GridBagConstraints.HORIZONTAL;
-
             ClickablePanel clickablePanel = new ClickablePanel();
-            add(clickablePanel, gbc);
 
+            add(clickablePanel, gbc);
         }
 
         /**
@@ -574,7 +578,6 @@ public class GameGUI extends JFrame{
      * Loads from a file with extension .game.
      */
     void loadGame() {
-        // Setup JFileChooser
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Load Game");
 
@@ -588,22 +591,15 @@ public class GameGUI extends JFrame{
             File file = fileChooser.getSelectedFile();
             String fileName = file.getAbsolutePath();
 
-            // If file name is missing the extension
-            if (!fileName.endsWith(".game")) {
-                fileName += ".game";
-            }
+            // If file name is missing the extension, add it
+            if (!fileName.endsWith(".game")) fileName += ".game";
 
             // Try to read the file and read each object in order
             try (FileInputStream fis = new FileInputStream(fileName);
                  ObjectInputStream ois = new ObjectInputStream(fis)) {
-                // Load size and number of tiles
                 setSize((int) ois.readObject());
                 setNumberTiles(size - 1);
-
-                // Start game based on size
                 game = new Game(size);
-
-                // Load grid, player and turn
                 game.setGrid((int[][]) ois.readObject());
                 game.loadCurrentPlayer((int) ois.readObject());
                 game.setTurn((int) ois.readObject());

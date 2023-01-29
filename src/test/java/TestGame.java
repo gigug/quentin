@@ -8,10 +8,10 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class testGame {
+class TestGame {
 
     @Test
-    public void testPassable(){
+    void testPassable(){
         // the following configuration of stones has to be passable
         int testSize = 2;
         Game testGame = new Game(testSize);
@@ -28,7 +28,7 @@ public class testGame {
 
     @ParameterizedTest
     @CsvSource({"0,0","0,2","2,2","2,0"})
-    public void testCheckDiagonalFalse(int posX, int posY){
+    void testCheckDiagonalFalse(int posX, int posY){
         // the following configuration of stones has to return false for checkDiagonal
         int testSize = 3;
         Game testGame = new Game(testSize);
@@ -41,7 +41,7 @@ public class testGame {
 
     @ParameterizedTest
     @CsvSource({"0,0","1,2","2,1"})
-    public void testCheckDiagonalTrue(int posX, int posY){
+    void testCheckDiagonalTrue(int posX, int posY){
         // the following configuration of stones has to return false for checkDiagonal
         int testSize = 3;
         Game testGame = new Game(testSize);
@@ -54,34 +54,34 @@ public class testGame {
     }
 
     @Test
-    public void testGetCurrentPlayer(){
+    void testGetCurrentPlayer(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
         // check black
-        assertEquals(testGame.getCurrentPlayer(), 1);
+        assertEquals(1, testGame.getCurrentPlayer());
 
         // switch to white
         testGame.switchPlayer();
-        assertEquals(testGame.getCurrentPlayer(), 2);
+        assertEquals(2, testGame.getCurrentPlayer());
     }
 
     @Test
-    public void testGetOppositePlayer(){
+    void testGetOppositePlayer(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
         // check white
-        assertEquals(testGame.getOppositePlayer(), 2);
+        assertEquals(2, testGame.getOppositePlayer());
 
         // switch to white
         // check black
         testGame.switchPlayer();
-        assertEquals(testGame.getOppositePlayer(), 1);
+        assertEquals(1, testGame.getOppositePlayer());
     }
 
     @Test
-    public void testCheckInGrid(){
+    void testCheckInGrid(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -93,7 +93,7 @@ public class testGame {
     }
 
     @Test
-    public void testCheckEmpty(){
+    void testCheckEmpty(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -108,7 +108,7 @@ public class testGame {
     }
 
     @Test
-    public void testCheckPassable(){
+    void testCheckPassable(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -123,7 +123,7 @@ public class testGame {
     }
 
     @Test
-    public void testFindRegions(){
+    void testFindRegions(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -146,7 +146,7 @@ public class testGame {
     }
 
     @Test
-    public void testFindTerritories(){
+    void testFindTerritories(){
 
         int testSize = 5;
         Game testGame = new Game(testSize);
@@ -171,7 +171,7 @@ public class testGame {
     }
 
     @Test
-    public void testFindRegionsChain(){
+    void testFindRegionsChain(){
         int testSize = 5;
         Game testGame = new Game(testSize);
 
@@ -209,7 +209,7 @@ public class testGame {
     }
 
     @Test
-    public void testChangestonePieRule(){
+    void testChangeStonePieRule(){
         int testSize = 2;
         Game testGame = new Game(testSize);
         int[][] testGrid = {{2,0}, {0,0}};
@@ -225,7 +225,7 @@ public class testGame {
     }
 
     @Test
-    public void testCheckWin(){
+    void testCheckWin(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -236,11 +236,11 @@ public class testGame {
         testGame.checkWin();
 
         assertTrue(testGame.isFinished());
-        assertEquals(testGame.getWinner(), 1);
+        assertEquals(1, testGame.getWinner());
     }
 
     @Test
-    public void testCheckWinFalse(){
+    void testCheckWinFalse(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -254,7 +254,7 @@ public class testGame {
     }
 
     @Test
-    public void testCheckTie(){
+    void testCheckTie(){
         int testSize = 2;
         Game testGame = new Game(testSize);
 
@@ -268,6 +268,6 @@ public class testGame {
         testGame.checkTie();
 
         assertTrue(testGame.isFinished());
-        assertEquals(testGame.getWinner(), 0);
+        assertEquals(0, testGame.getWinner());
     }
 }
