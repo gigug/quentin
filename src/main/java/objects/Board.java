@@ -2,6 +2,8 @@ package objects;
 
 /**
  * Class that implements the board for the game Quentin.
+ *
+ * @author Gianluca Guglielmo
  */
 public class Board {
 

@@ -5,6 +5,8 @@ import java.awt.*;
 
 /**
  * Class that implements black JButtons used in the Quentin GUI.
+ *
+ * @author Gianluca Guglielmo
  */
 public class BlackButton extends JButton{
 

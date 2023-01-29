@@ -7,21 +7,20 @@ import java.util.Stack;
 
 import objects.Board;
 import players.Player;
-import players.PlayerWrapper;
 
 /**
  * Class that implements the board game Quentin.
+ *
+ * @author Gianluca Guglielmo
  */
 public class Game {
     // Declare players
     private final Player blackPlayer = new Player(1);
     private final Player whitePlayer = new Player(2);
+    private Player currentPlayer;
 
     // Turn number
     private int turn;
-
-    // Current player
-    private PlayerWrapper currentPlayer;
 
     // Winner of the game
     private int winner;
@@ -55,7 +54,7 @@ public class Game {
         board = new Board(size);
 
         // initialize first player
-        currentPlayer = new PlayerWrapper(blackPlayer);
+        currentPlayer = blackPlayer;
     }
 
     /**
@@ -64,7 +63,7 @@ public class Game {
      * @param loadedPlayer loaded player from .game file.
      */
     public void loadCurrentPlayer(int loadedPlayer){
-        currentPlayer = (loadedPlayer == 1) ? new PlayerWrapper(blackPlayer) : new PlayerWrapper(whitePlayer);
+        currentPlayer = (loadedPlayer == 1) ? blackPlayer : whitePlayer;
     }
 
     /**
@@ -89,7 +88,7 @@ public class Game {
      * Switch current player with opposite player.
      */
     public void switchPlayer() {
-        currentPlayer = (getCurrentPlayer() == 1) ? new PlayerWrapper(whitePlayer) : new PlayerWrapper(blackPlayer);
+        currentPlayer = (getCurrentPlayer() == 1) ? whitePlayer : blackPlayer;
     }
 
     /**
@@ -112,9 +111,7 @@ public class Game {
      * @return true if grid is empty in specified coordinates.
      */
     public boolean checkEmpty(int X, int Y) {
-        if (!checkInGrid(X, Y)){
-            return true;
-        }
+        if (!checkInGrid(X, Y)) return true;
         return getStone(X, Y) == 0;
     }
 
@@ -288,9 +285,7 @@ public class Game {
     private void exploreRegion(int X, int Y, boolean[][] visited, List<int[]> region, boolean chains, int color) {
 
         // If: searching for chains and found wrong color or searching for regions and not empty, return
-        if ((chains && getStone(X, Y) != color) || (!chains && !checkEmpty(X, Y))){
-            return;
-        }
+        if ((chains && getStone(X, Y) != color) || (!chains && !checkEmpty(X, Y))) return;
 
         // Mark the current tile as visited
         visited[X][Y] = true;
@@ -306,9 +301,7 @@ public class Game {
 
             // Explore coordinates not yet visited
             if (checkInGrid(newX, newY)){
-                if (!visited[newX][newY]){
-                    exploreRegion(newX, newY, visited, region, chains, color);
-                }
+                if (!visited[newX][newY]) exploreRegion(newX, newY, visited, region, chains, color);
             }
         }
     }
@@ -588,11 +581,9 @@ public class Game {
      */
     public void addStack() {
         // Deep copy
-        int[][] temporaryGrid = new int[size][size];
-        for (int i = 0; i < size; i++) {
-            temporaryGrid[i] = Arrays.copyOf(getGrid()[i], size);
-        }
-        previousGridStack.push(temporaryGrid);
+        int[][] tempGrid = new int[size][size];
+        for (int i = 0; i < size; i++) tempGrid[i] = Arrays.copyOf(getGrid()[i], size);
+        previousGridStack.push(tempGrid);
     }
 
     /**

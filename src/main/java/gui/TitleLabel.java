@@ -4,6 +4,8 @@ import javax.swing.*;
 
 /**
  * Class that implements the labels shown in the different panels of the GUI.
+ *
+ * @author Gianluca Guglielmo
  */
 public class TitleLabel extends JLabel {
 

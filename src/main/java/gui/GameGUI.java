@@ -9,10 +9,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import static gui.FunctionsGUI.centerWindow;
-
 /**
  * Class that implements the GUI for the game Quentin.
+ *
+ * @author Gianluca Guglielmo
  */
 public class GameGUI extends JFrame{
 
@@ -85,6 +85,8 @@ public class GameGUI extends JFrame{
 
     /**
      * Panel that displays start menu.
+     *
+     * @author Gianluca Guglielmo
      */
     private class StartMenuPanel extends JPanel{
 
@@ -145,6 +147,8 @@ public class GameGUI extends JFrame{
 
     /**
      * Panel that displays size selection menu.
+     *
+     * @author Gianluca Guglielmo
      */
     private class SelectSizePanel extends JPanel{
 
@@ -195,6 +199,8 @@ public class GameGUI extends JFrame{
 
     /**
      * Panel that displays turn, grid and options
+     *
+     * @author Gianluca Guglielmo
      */
     private class BoardPanel extends JPanel{
         JPanel turnPanel = new JPanel();
@@ -316,6 +322,8 @@ public class GameGUI extends JFrame{
 
     /**
      * Panel that draws the grid.
+     *
+     * @author Gianluca Guglielmo
      */
     private class InternalBoardPanel extends JPanel{
         private final int boardWidth;
@@ -386,14 +394,12 @@ public class GameGUI extends JFrame{
             g2.setStroke(new BasicStroke(thicknessInternal));
 
             // Vertical lines
-            for (int i = 3; i < numberTiles + 2; i++) {
-                g2.drawLine(internalReferencePoint, PANEL_WIDTH * i, boardWidth - internalReferencePoint, PANEL_WIDTH * i);
-            }
+            for (int i = 3; i < numberTiles + 2; i++) g2.drawLine(internalReferencePoint, PANEL_WIDTH * i, boardWidth - internalReferencePoint, PANEL_WIDTH * i);
+
 
             // Horizontal lines
-            for (int i = 3; i < numberTiles + 2; i++) {
-                g2.drawLine(PANEL_WIDTH * i, internalReferencePoint, PANEL_WIDTH * i, boardWidth - internalReferencePoint);
-            }
+            for (int i = 3; i < numberTiles + 2; i++) g2.drawLine(PANEL_WIDTH * i, internalReferencePoint, PANEL_WIDTH * i, boardWidth - internalReferencePoint);
+
 
             Color colorFill;
             Color colorSurface = Color.GREEN;
@@ -418,6 +424,8 @@ public class GameGUI extends JFrame{
 
     /**
      * Panel that draws board and stones.
+     *
+     * @author Gianluca Guglielmo
      */
     private class ClickablePanel extends JPanel{
 
@@ -463,9 +471,7 @@ public class GameGUI extends JFrame{
                                 boardPanel.setTurnLabel();
                             }
                             // If special case, recreate board to allow for new buttons
-                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.isFinished()){
-                                createGameCard();
-                            }
+                            if (game.getTurn() == 1 || game.getTurn() == 2 || game.checkPassable() || game.isFinished()) createGameCard();
                         });
 
                         // Set the hoveredRow and hoveredCol variables when the mouse enters the button
@@ -534,6 +540,18 @@ public class GameGUI extends JFrame{
     }
 
     /**
+     * Method that centers the window frame.
+     *
+     * @param frame to center.
+     */
+    private static void centerWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
+    }
+
+    /**
      * Method to save the game.
      * Saves, in order: size, grid, current player and turn.
      * Saves to a file with extension .game.
@@ -555,9 +573,7 @@ public class GameGUI extends JFrame{
             String fileName = file.getAbsolutePath();
 
             // If file name is missing the extension
-            if (!fileName.endsWith(".game")) {
-                fileName += ".game";
-            }
+            if (!fileName.endsWith(".game")) fileName += ".game";
 
             // Try to read the file and write each object in order
             try (FileOutputStream fos = new FileOutputStream(fileName);
