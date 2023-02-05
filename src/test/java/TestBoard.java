@@ -1,19 +1,26 @@
 import objects.Board;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import screens.Game;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestBoard {
 
+    private int testSize;
+    private Board testBoard;
+
+    @AfterEach
+    void tearDown(){
+        testBoard = null;
+    }
     @Test
     void testGrid(){
 
-        int testSize = 3;
-        Board testBoard = new Board(testSize);
+        testSize = 3;
+        testBoard = new Board(testSize);
 
         int[][] testGrid = {{0, 0, 0},
                             {0, 0, 0},
@@ -23,8 +30,8 @@ class TestBoard {
 
     @Test
     void testCheckInGrid(){
-        int testSize = 2;
-        Board testBoard = new Board(testSize);
+        testSize = 2;
+        testBoard = new Board(testSize);
 
         assertTrue(testBoard.checkInGrid(0,0));
         assertFalse(testBoard.checkInGrid(2,2));
@@ -32,8 +39,8 @@ class TestBoard {
 
     @Test
     void testCheckEmpty(){
-        int testSize = 2;
-        Board testBoard = new Board(testSize);
+        testSize = 2;
+        testBoard = new Board(testSize);
 
         assertTrue(testBoard.checkEmpty(0,0));
         testBoard.addStone(1,1, 1);
@@ -43,10 +50,22 @@ class TestBoard {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     void testGetStone(int tileId) {
-        int testSize = 3;
-        Board testBoard = new Board(testSize);
+        testSize = 3;
+        testBoard = new Board(testSize);
 
         assertEquals(testBoard.getStone(tileId, tileId), 0);
+    }
+
+    @Test
+    void testChangeStonePieRule(){
+        testSize = 2;
+        testBoard = new Board(testSize);
+        int[][] testGrid = {{2,0}, {0,0}};
+
+        testBoard.addStone(0,0, 1);
+        testBoard.changeStonePieRule();
+
+        assertArrayEquals(testBoard.getGrid(), testGrid);
     }
 
 }

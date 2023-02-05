@@ -190,20 +190,7 @@ class TestGame {
         assertArrayEquals(chainPredicted.get(4), chainElement4);
     }
 
-    @Test
-    void testChangeStonePieRule(){
-        testSize = 2;
-        testGame = new Game(testSize);
-        testBoard = new Board(testSize);
-        int[][] testGrid = {{2,0}, {0,0}};
 
-        testBoard.addStone(0,0, 1);
-        testBoard.changeStonePieRule();
-
-        testGame.loadGrid(testBoard.getGrid());
-
-        assertArrayEquals(testGame.getGrid(), testGrid);
-    }
 
     @Test
     void testCheckWin(){

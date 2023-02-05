@@ -48,7 +48,12 @@ public class Game {
         currentPlayer = BLACK_PLAYER;
     }
 
-    public FrozenBoard getBoardView() {
+    /**
+     * Return FrozenBoard for safe handling of Board.
+     *
+     * @return FrozenBoard.
+     */
+    public FrozenBoard getFrozenBoard() {
         return board;
     }
 
