@@ -7,8 +7,6 @@ import gui.GameGUI;
  */
 public class Quentin {
     public static void main(String[] args){
-
-        // Start GUI
-        GameGUI startGUI = new GameGUI();
+        GameGUI gameGUI = new GameGUI();
     }
 }

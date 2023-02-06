@@ -66,7 +66,7 @@ public class GameGUI extends JFrame{
         setVisible(true);
         setMinimumSize(MINIMUM_WINDOW_DIMENSION);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        UtilsGUI.centerWindow(this);
+        centerWindow();
     }
 
     /**
@@ -207,5 +207,14 @@ public class GameGUI extends JFrame{
         }
     }
 
+    /**
+     * Method that centers the window frame.
+     */
+    private void centerWindow() {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);
+        this.setLocation(x, y);
+    }
 }
 
