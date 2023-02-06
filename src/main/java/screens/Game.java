@@ -31,7 +31,7 @@ public class Game {
     private List<List<int[]>> regions = new ArrayList<>();
     private List<List<int[]>> chains = new ArrayList<>();
     private List<List<int[]>> territories = new ArrayList<>();
-    private final Stack<int[][]> previousGridStack = new Stack<int[][]>();
+    private Stack<int[][]> previousGridStack = new Stack<int[][]>();
 
     // Initialize directions used in the class methods
     int[][] directions = new int[][]{{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
@@ -136,7 +136,7 @@ public class Game {
      * @param Y int representing the y position of the stone.
      * @return boolean indicating whether the stone can be placed.
      */
-    public boolean checkPlaceble(int X, int Y){
+    public boolean checkPlaceable(int X, int Y){
         return (board.checkEmpty(X, Y) && checkDiagonal(X, Y));
     }
 
@@ -494,6 +494,23 @@ public class Game {
      */
     public int getSize() {
         return size;
+    }
+
+    /**
+     * Getter method to retrieve the stack of previous moves
+     */
+    public Stack<int[][]> getPreviousGridStack(){
+        return previousGridStack;
+    }
+
+
+    /**
+     * Setter method to load the stack of previous moves.
+     *
+     * @param newPreviousGridStack Stack loaded from file.
+     */
+    public void setPreviousGridStack(Stack<int[][]> newPreviousGridStack){
+        previousGridStack = newPreviousGridStack;
     }
 
     /**

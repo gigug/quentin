@@ -59,7 +59,7 @@ class ClickablePanel extends JPanel {
 
         // Color hovered cells green if a stone can be placed there, otherwise red
         if (gameGUI.hX > -1) {
-            if (gameGUI.game.checkPlaceble(gameGUI.hX, gameGUI.hY)) g2.setColor(Color.GREEN);
+            if (gameGUI.game.checkPlaceable(gameGUI.hX, gameGUI.hY)) g2.setColor(Color.GREEN);
             else g2.setColor(Color.RED);
             g2.fillOval(GameGUI.PANEL_WIDTH * gameGUI.hX, GameGUI.PANEL_WIDTH * gameGUI.hY, GameGUI.PANEL_WIDTH, GameGUI.PANEL_WIDTH);
         }
@@ -95,7 +95,7 @@ class ClickablePanel extends JPanel {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (gameGUI.game.checkPlaceble(X, Y)){
+            if (gameGUI.game.checkPlaceable(X, Y)){
                 gameGUI.game.progress(X, Y);
                 gameGUI.boardPanel.setTurnLabel();
             }

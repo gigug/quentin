@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
+import java.util.Stack;
 
 /**
  * Utility class with several methods used from other GUI classes.
@@ -53,6 +54,7 @@ public class UtilsGUI {
             oos.writeObject(gameGUI.game.getGrid());
             oos.writeObject(gameGUI.game.getCurrentPlayer());
             oos.writeObject(gameGUI.game.getTurn());
+            oos.writeObject(gameGUI.game.getPreviousGridStack());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,6 +83,7 @@ public class UtilsGUI {
             gameGUI.game.loadGrid((int[][]) ois.readObject());
             gameGUI.game.loadCurrentPlayer((PlayerColor) ois.readObject());
             gameGUI.game.setTurn((int) ois.readObject());
+            gameGUI.game.setPreviousGridStack((Stack<int[][]>) ois.readObject());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
