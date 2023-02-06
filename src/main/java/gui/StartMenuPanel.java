@@ -38,6 +38,10 @@ class StartMenuPanel extends JPanel {
         loadGameButton.addActionListener(gameGUI.loadGameActionListener);
         buttons.add(loadGameButton, constraintsButtons);
 
+        StandardButton infoButton = new StandardButton("Info");
+        infoButton.addActionListener(gameGUI.infoActionListener);
+        buttons.add(infoButton, constraintsButtons);
+
         StandardButton exitGameButton = new StandardButton("Exit game");
         exitGameButton.addActionListener(gameGUI.exitGameActionListener);
         buttons.add(exitGameButton, constraintsButtons);

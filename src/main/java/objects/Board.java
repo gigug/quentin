@@ -6,8 +6,6 @@ package objects;
  * @author Gianluca Guglielmo
  */
 public class Board implements FrozenBoard{
-
-    // Game board
     private int[][] grid;
     private final int size;
 

@@ -22,9 +22,6 @@ public class GameGUI extends JFrame{
 
     Game game;
 
-    // Container with CardLayout
-    final Container contentPane;
-
     // Game-related variables
     private int size;
     private int numberTiles;
@@ -40,6 +37,7 @@ public class GameGUI extends JFrame{
         UtilsGUI.loadGame(this);
         createGameCard();
     };
+    ActionListener infoActionListener = e -> CARDS.show(getContentPane(), "infoPanel");
     ActionListener exitGameActionListener = e -> System.exit(0);
     ActionListener saveGameActionListener = e -> UtilsGUI.saveGame(this);
     ActionListener passActionListener = e -> {
@@ -59,14 +57,16 @@ public class GameGUI extends JFrame{
      * Constructor for the GameGUI class.
      */
     public GameGUI(){
-        contentPane = getContentPane();
-        contentPane.setLayout(CARDS);
+        setLayout(CARDS);
 
         StartMenuPanel startMenuPanel = new StartMenuPanel(this);
-        contentPane.add("startMenuPanel", startMenuPanel);
+        add("startMenuPanel", startMenuPanel);
 
         SelectSizePanel selectSizePanel = new SelectSizePanel(this);
-        contentPane.add("selectSizePanel", selectSizePanel);
+        add("selectSizePanel", selectSizePanel);
+
+        InfoPanel infoPanel = new InfoPanel();
+        add("infoPanel", infoPanel);
 
         MenuBar menuBar = new MenuBar(this);
 
@@ -96,8 +96,8 @@ public class GameGUI extends JFrame{
      */
     void createGameCard(){
         boardPanel = new BoardPanel(this);
-        contentPane.add("boardPanel", boardPanel);
-        CARDS.show(contentPane, "boardPanel");
+        add("boardPanel", boardPanel);
+        CARDS.show(this.getContentPane(),"boardPanel");
     }
 
     /**
