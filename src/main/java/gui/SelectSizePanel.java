@@ -17,7 +17,7 @@ class SelectSizePanel extends JPanel {
     /**
      * Default constructor for SelectSizePanel.
      */
-    public SelectSizePanel(GameGUI gameGUI){
+    SelectSizePanel(GameGUI gameGUI){
         super();
 
         setLayout(GameGUI.GRID_BAG_LAYOUT);

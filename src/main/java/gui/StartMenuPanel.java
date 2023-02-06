@@ -14,7 +14,7 @@ class StartMenuPanel extends JPanel {
     /**
      * Constructor for the StartMenuPanel class.
      */
-    public StartMenuPanel(GameGUI gameGUI){
+    StartMenuPanel(GameGUI gameGUI){
         super();
 
         setLayout(GameGUI.GRID_BAG_LAYOUT);

@@ -14,7 +14,7 @@ import java.util.Stack;
  *
  * @author Gianluca Guglielmo.
  */
-public class UtilsGUI {
+class UtilsGUI {
 
     /**
      * Private constructor for UtilsGUI, cannot be used.
