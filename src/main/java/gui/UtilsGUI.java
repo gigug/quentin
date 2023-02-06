@@ -15,6 +15,9 @@ import java.io.*;
  */
 public class UtilsGUI {
 
+    /**
+     * Private constructor for UtilsGUI, cannot be used.
+     */
     private UtilsGUI() {}
 
     /**

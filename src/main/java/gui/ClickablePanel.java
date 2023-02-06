@@ -40,7 +40,7 @@ class ClickablePanel extends JPanel {
                     button.setOpaque(false);
                     button.setContentAreaFilled(false);
                     button.setBorderPainted(false);
-                    button.addMouseListener(new gridMouseListener(X, Y, gameGUI, this));
+                    button.addMouseListener(new GridMouseListener(X, Y, gameGUI, this));
                 }
 
             }
@@ -68,7 +68,7 @@ class ClickablePanel extends JPanel {
     /**
      * Static class that manages clicks on the grid.
      */
-    static class gridMouseListener implements MouseListener {
+    static class GridMouseListener implements MouseListener {
         private final int X;
         private final int Y;
         private final ClickablePanel clickablePanel;
@@ -82,7 +82,7 @@ class ClickablePanel extends JPanel {
          * @param gameGUI current gameGUI.
          * @param clickablePanel current clickablePanel.
          */
-        gridMouseListener(int X, int Y, GameGUI gameGUI, ClickablePanel clickablePanel){
+        GridMouseListener(int X, int Y, GameGUI gameGUI, ClickablePanel clickablePanel){
             this.X = X;
             this.Y = Y;
             this.gameGUI = gameGUI;
