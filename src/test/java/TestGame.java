@@ -33,7 +33,7 @@ class TestGame {
         testBoard.addStone(1, 0, 2);
         testBoard.addStone(0, 1, 2);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
 
         assertTrue(testGame.checkPassable());
     }
@@ -47,7 +47,7 @@ class TestGame {
 
         testBoard.addStone(1, 1, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
         assertFalse(testGame.checkDiagonal(posX, posY));
     }
 
@@ -61,7 +61,7 @@ class TestGame {
         testBoard.addStone(1, 1, 1);
         testBoard.addStone(1, 0, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
 
         assertTrue(testGame.checkDiagonal(posX, posY));
     }
@@ -98,7 +98,7 @@ class TestGame {
         testBoard.addStone(1,0, 1);
         testBoard.addStone(1,1, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
         assertTrue(testGame.checkPassable());
     }
 
@@ -112,7 +112,7 @@ class TestGame {
         testBoard.addStone(0,1, 1);
         testBoard.addStone(1,0, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
         testGame.findRegions(false);
 
         int[] regionElement = {1, 1};
@@ -135,7 +135,7 @@ class TestGame {
         testBoard.addStone(3, 2, 1);
         testBoard.addStone(2, 3, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
 
         int[] territoryElement = {2,2};
 
@@ -162,7 +162,7 @@ class TestGame {
         testBoard.addStone(0,3, 1);
         testBoard.addStone(0,4, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
 
         // region
         List<int[]> chain = new ArrayList<int[]>();
@@ -201,7 +201,7 @@ class TestGame {
         testBoard.addStone(0,0, 1);
         testBoard.addStone(0,1, 1);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
 
         // check win
         testGame.checkWin();
@@ -219,7 +219,7 @@ class TestGame {
         testBoard.addStone(0,0, 1);
         testBoard.addStone(0,1, 2);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
         testGame.checkWin();
 
         assertFalse(testGame.isGameFinished());
@@ -236,7 +236,7 @@ class TestGame {
         testBoard.addStone(0,1, 2);
         testBoard.addStone(1,0, 2);
 
-        testGame.loadGrid(testBoard.getGrid());
+        testGame.setGrid(testBoard.getGrid());
 
         testGame.checkWin();
         testGame.checkTie();

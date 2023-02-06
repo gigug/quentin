@@ -74,8 +74,6 @@ class SelectSizePanel extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            gameGUI.setSize(numberTiles + 1);
-            gameGUI.setNumberTiles(numberTiles);
             gameGUI.initializeGame(numberTiles + 1);
         }
     }

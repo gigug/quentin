@@ -1,10 +1,14 @@
 package gui;
 
+import players.PlayerColor;
 import screens.Game;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.Stack;
 
 /**
  * Class that implements the GUI for the game Quentin.
@@ -22,10 +26,6 @@ public class GameGUI extends JFrame{
 
     Game game;
 
-    // Game-related variables
-    private int size;
-    private int numberTiles;
-
     // GUI-related variables
     int hX = -1;
     int hY = -1;
@@ -35,7 +35,7 @@ public class GameGUI extends JFrame{
     ActionListener mainMenuActionListener = e -> CARDS.show(getContentPane(), "startMenuPanel");
     ActionListener newGameActionListener = e -> CARDS.show(getContentPane(), "selectSizePanel");
     ActionListener loadGameActionListener = e -> {
-        UtilsGUI.loadGame(this);
+        loadGame();
         createGameCard();
     };
     ActionListener infoActionListener = e -> CARDS.show(getContentPane(), "infoPanel");
@@ -80,6 +80,20 @@ public class GameGUI extends JFrame{
     }
 
     /**
+     * Method to initialize the game given additional features when loading game.
+     *
+     * @param size int representing the size of the board.
+     * @param grid loaded grid.
+     * @param currentPlayer player that needs to move.
+     * @param turn current turn.
+     * @param previousGridStack previous moves.
+     */
+    void initializeGame(int size, int[][] grid, PlayerColor currentPlayer, int turn, Stack<int[][]> previousGridStack){
+        game = new Game(size, grid, currentPlayer, turn, previousGridStack);
+        createGameCard();
+    }
+
+    /**
      * Method to recreate the board panel when needed.
      */
     void createGameCard(){
@@ -89,30 +103,12 @@ public class GameGUI extends JFrame{
     }
 
     /**
-     * Method used to set the size variable.
-     *
-     * @param size int representing the size of the grid.
-     */
-    void setSize(int size) {
-        this.size = size;
-    }
-
-    /**
-     * Method used to set the numberTiles variable.
-     *
-     * @param numberTiles int representing the size of the grid.
-     */
-    void setNumberTiles(int numberTiles) {
-        this.numberTiles = numberTiles;
-    }
-
-    /**
      * Getter for numberTiles.
      *
      * @return numberTiles - int representing the number of tiles along a dimension.
      */
     int getNumberTiles(){
-        return numberTiles;
+        return getGridSize() - 1;
     }
 
     /**
@@ -121,7 +117,95 @@ public class GameGUI extends JFrame{
      * @return numberTiles - int representing the size of the grid.
      */
     int getGridSize(){
-        return size;
+        return game.getSize();
     }
+
+    /**
+     * Method to avoid duplication on save/load file.
+     *
+     * @param save boolean indicating whether to display save or load text.
+     * @return fileName.
+     */
+    private String fileSelector(boolean save){
+        JFileChooser fileChooser = new JFileChooser(save ? "Choose save file" : "Choose load file");
+
+        // Use .game extension
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Game files (*.game)", "game"));
+
+        // Check if JFileChooser goes through
+        int result = fileChooser.showSaveDialog(new JFrame());
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String fileName = file.getAbsolutePath();
+
+            if (!fileName.endsWith(".game")) fileName += ".game";
+
+            return fileName;
+        }
+
+        return null;
+    }
+
+    /**
+     * Method to load the game.
+     * Loads from a file with extension .game.
+     */
+    private void loadGame(){
+        String fileName = fileSelector(false);
+        loadObjectsFromFile(fileName);
+    }
+
+    /**
+     * Method to save the game. Saves to a file with extension .game.
+     */
+    void saveGame(){
+        String fileName = fileSelector(true);
+        writeObjectsToFile(fileName);
+    }
+
+    /**
+     * Method to load game objects given fileName.
+     *
+     * @param fileName string indicating the file to load.
+     */
+    private void loadObjectsFromFile(String fileName) {
+        int size;
+        int[][] grid;
+        PlayerColor currentPlayer;
+        int turn;
+        Stack<int[][]> previousGridStack;
+
+        try (FileInputStream fis = new FileInputStream(fileName);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            size = (int) ois.readObject();
+            grid = (int[][]) ois.readObject();
+            currentPlayer = (PlayerColor) ois.readObject();
+            turn = (int) ois.readObject();
+            previousGridStack = (Stack<int[][]>) ois.readObject();
+
+            initializeGame(size, grid, currentPlayer, turn, previousGridStack);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to save game objects given fileName.
+     *
+     * @param fileName string indicating the file to save into.
+     */
+    private void writeObjectsToFile(String fileName) {
+        try (FileOutputStream fos = new FileOutputStream(fileName);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(game.getSize());
+            oos.writeObject(game.getGrid());
+            oos.writeObject(game.getCurrentPlayer());
+            oos.writeObject(game.getTurn());
+            oos.writeObject(game.getPreviousGridStack());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 

@@ -76,7 +76,7 @@ class BoardPanel extends JPanel {
         buttonPanel.add(passableButton);
 
         saveGameMenuButton = new StandardButton("Save Game");
-        ActionListener saveGameActionListener = e -> UtilsGUI.saveGame(gameGUI);
+        ActionListener saveGameActionListener = e -> gameGUI.saveGame();
         saveGameMenuButton.addActionListener(saveGameActionListener);
         buttonPanel.add(saveGameMenuButton);
 

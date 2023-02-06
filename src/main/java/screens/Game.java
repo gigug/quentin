@@ -48,6 +48,14 @@ public class Game {
         currentPlayer = BLACK_PLAYER;
     }
 
+    public Game(int size, int[][] grid, PlayerColor currentPlayer, int turn, Stack<int[][]> previousGridStack){
+        this(size);
+        this.setGrid(grid);
+        this.setCurrentPlayer(currentPlayer);
+        this.setTurn(turn);
+        this.setPreviousGridStack(previousGridStack);
+    }
+
     /**
      * Return FrozenBoard for safe handling of Board.
      *
@@ -62,7 +70,7 @@ public class Game {
      *
      * @param loadedPlayer loaded player from .game file.
      */
-    public void loadCurrentPlayer(PlayerColor loadedPlayer){
+    public void setCurrentPlayer(PlayerColor loadedPlayer){
         currentPlayer = loadedPlayer;
     }
 
@@ -442,7 +450,7 @@ public class Game {
      *
      * @param newGrid int[][] representing the loaded grid.
      */
-    public void loadGrid(int[][] newGrid) {
+    public void setGrid(int[][] newGrid) {
         board.loadGrid(newGrid);
     }
 
@@ -561,7 +569,7 @@ public class Game {
      * Method to undo moves.
      */
     public void undoMove() {
-        loadGrid(previousGridStack.pop());
+        setGrid(previousGridStack.pop());
         switchPlayer();
         decreaseTurn();
     }
