@@ -9,6 +9,7 @@ import java.awt.*;
  * @author Gianluca Guglielmo
  */
 class StartMenuPanel extends JPanel {
+    private final static Color BACKGROUND_COLOR_START_MENU = Color.decode("#F46036");
 
     /**
      * Constructor for the StartMenuPanel class.
@@ -16,51 +17,29 @@ class StartMenuPanel extends JPanel {
     public StartMenuPanel(GameGUI gameGUI){
         super();
 
-        // Set GridBagLayout for the buttons
         setLayout(GameGUI.GRID_BAG_LAYOUT);
+        setBackground(BACKGROUND_COLOR_START_MENU);
 
-        // Set background color
-        setBackground(GameGUI.BACKGROUND_COLOR_1);
+        Constraints constraintsPanel = new Constraints(false);
+        Constraints constraintsButtons = new Constraints(true);
 
-        // Start new game
-        BlackButton newGameButton = new BlackButton("New game");
-        newGameButton.addActionListener(e -> gameGUI.CARDS.show(gameGUI.contentPane, "selectSizePanel"));
-
-        // Load game
-        BlackButton loadGameButton = new BlackButton("Load game");
-        loadGameButton.addActionListener(e -> {
-            gameGUI.loadGame();
-            gameGUI.createGameCard();
-        });
-
-        // Exit game
-        BlackButton exitGameButton = new BlackButton("Exit game");
-        exitGameButton.addActionListener(e -> System.exit(0));
-
-        // Constraints for grid bag layout
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        // Order elements vertically by setting one element per row
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-
-        // Set small border between buttons
-        gbc.insets = GameGUI.INSETS;
-
-        // Add label to panel
         TitleLabel label = new TitleLabel("Quentin");
-        add(label, gbc);
+        add(label, constraintsPanel);
 
-        // Make buttons the same width
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Create new panel for buttons
         JPanel buttons = new JPanel(GameGUI.GRID_BAG_LAYOUT);
+        buttons.setBackground(BACKGROUND_COLOR_START_MENU);
+        add(buttons, constraintsPanel);
 
-        // Using same constraints for buttons
-        buttons.add(newGameButton, gbc);
-        buttons.add(loadGameButton, gbc);
-        buttons.add(exitGameButton, gbc);
-        buttons.setBackground(GameGUI.BACKGROUND_COLOR_1);
-        add(buttons, gbc);
+        StandardButton newGameButton = new StandardButton("New game");
+        newGameButton.addActionListener(gameGUI.newGameActionListener);
+        buttons.add(newGameButton, constraintsButtons);
+
+        StandardButton loadGameButton = new StandardButton("Load game");
+        loadGameButton.addActionListener(gameGUI.loadGameActionListener);
+        buttons.add(loadGameButton, constraintsButtons);
+
+        StandardButton exitGameButton = new StandardButton("Exit game");
+        exitGameButton.addActionListener(gameGUI.exitGameActionListener);
+        buttons.add(exitGameButton, constraintsButtons);
     }
 }

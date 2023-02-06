@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Class that implements the labels shown in the different panels of the GUI.
@@ -8,14 +9,16 @@ import javax.swing.*;
  * @author Gianluca Guglielmo
  */
 class TitleLabel extends JLabel {
+    private final static Font FONT_TITLE = new Font("monospaced", Font.BOLD, 35);
+    private final static Color FONT_COLOR = Color.decode("#E1F2FE");
 
     /**
      * Default constructor for the class Label.
      */
     TitleLabel(){
         super();
-        setFont(GameGUI.FONT_BIG);
-        setForeground(GameGUI.FONT_COLOR);
+        setFont(FONT_TITLE);
+        setForeground(FONT_COLOR);
     }
 
     /**

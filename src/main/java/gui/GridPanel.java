@@ -10,31 +10,26 @@ import java.awt.*;
  *
  * @author Gianluca Guglielmo
  */
-class InternalBoardPanel extends JPanel {
+class GridPanel extends JPanel {
     private final int boardWidth;
+    private final static Color BOARD_COLOR = Color.decode("#815E5B");
     GameGUI gameGUI;
 
     /**
-     * Default constructor for InternalBoardPanel.
+     * Default constructor for GridPanel.
      */
-    InternalBoardPanel(GameGUI gameGUI){
+    GridPanel(GameGUI gameGUI){
         super();
-
         this.gameGUI = gameGUI;
 
-        setLayout(GameGUI.GRID_BAG_LAYOUT);
-
-        boardWidth = GameGUI.PANEL_WIDTH * (gameGUI.numberTiles + 4);
+        boardWidth = GameGUI.PANEL_WIDTH * (gameGUI.getNumberTiles() + 4);
         Dimension boardDimension = new Dimension(boardWidth, boardWidth);
 
+        setLayout(GameGUI.GRID_BAG_LAYOUT);
         setPreferredSize(boardDimension);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         ClickablePanel clickablePanel = new ClickablePanel(gameGUI);
-
-        add(clickablePanel, gbc);
+        add(clickablePanel);
     }
 
     /**
@@ -45,7 +40,7 @@ class InternalBoardPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g);
 
-        g.setColor(GameGUI.BOARD_COLOR);
+        g.setColor(BOARD_COLOR);
         g.fillRect(0,0, boardWidth, boardWidth);
 
         float thicknessBorders = 1;
@@ -83,17 +78,17 @@ class InternalBoardPanel extends JPanel {
         g2.setStroke(new BasicStroke(thicknessInternal));
 
         // Vertical lines
-        for (int i = 3; i < gameGUI.numberTiles + 2; i++) g2.drawLine(internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint, GameGUI.PANEL_WIDTH * i);
+        for (int i = 3; i < gameGUI.getNumberTiles() + 2; i++) g2.drawLine(internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint, GameGUI.PANEL_WIDTH * i);
 
 
         // Horizontal lines
-        for (int i = 3; i < gameGUI.numberTiles + 2; i++) g2.drawLine(GameGUI.PANEL_WIDTH * i, internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint);
+        for (int i = 3; i < gameGUI.getNumberTiles() + 2; i++) g2.drawLine(GameGUI.PANEL_WIDTH * i, internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint);
 
 
         Color colorFill;
         Color colorSurface = Color.GREEN;
 
-        // stones
+        // Stones
         FrozenBoard board = gameGUI.game.getFrozenBoard();
         for(int i = 0; i < gameGUI.game.getSize(); i++) {
             for (int j = 0; j < gameGUI.game.getSize(); j++) {

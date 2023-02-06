@@ -16,23 +16,18 @@ class MenuBar extends JMenuBar {
         super();
 
         final JMenu fileMenu = new JMenu("File");
+        add(fileMenu);
 
         final JMenuItem newGameMenuItem = new JMenuItem("New Game");
-        newGameMenuItem.addActionListener(e -> gameGUI.CARDS.show(gameGUI.getContentPane(), "selectSizePanel"));
+        newGameMenuItem.addActionListener(gameGUI.newGameActionListener);
+        fileMenu.add(newGameMenuItem);
 
         final JMenuItem loadGameMenuItem = new JMenuItem("Load Game");
-        loadGameMenuItem.addActionListener(e -> {
-            gameGUI.loadGame();
-            gameGUI.createGameCard();
-        });
+        loadGameMenuItem.addActionListener(gameGUI.loadGameActionListener);
+        fileMenu.add(loadGameMenuItem);
 
         final JMenuItem exitMenuItem = new JMenuItem("Exit");
-        exitMenuItem.addActionListener(e -> System.exit(0));
-
-        fileMenu.add(newGameMenuItem);
-        fileMenu.add(loadGameMenuItem);
+        exitMenuItem.addActionListener(gameGUI.exitGameActionListener);
         fileMenu.add(exitMenuItem);
-
-        add(fileMenu);
     }
 }
