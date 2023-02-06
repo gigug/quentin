@@ -4,6 +4,7 @@ import players.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 /**
@@ -51,19 +52,32 @@ class BoardPanel extends JPanel {
         add(buttonPanel, constraints);
 
         undoButton = new StandardButton("Undo move");
-        undoButton.addActionListener(gameGUI.undoMoveActionListener);
+        ActionListener undoMoveActionListener = e -> {
+            gameGUI.game.undoMove();
+            gameGUI.createGameCard();
+        };
+        undoButton.addActionListener(undoMoveActionListener);
         buttonPanel.add(undoButton);
 
         pieRuleButton = new StandardButton("Switch sides");
-        pieRuleButton.addActionListener(gameGUI.pieRuleActionListener);
+        ActionListener pieRuleActionListener = e -> {
+            gameGUI.game.pieRule();
+            gameGUI.createGameCard();
+        };
+        pieRuleButton.addActionListener(pieRuleActionListener);
         buttonPanel.add(pieRuleButton);
 
         passableButton = new StandardButton("Pass");
-        passableButton.addActionListener(gameGUI.passActionListener);
+        ActionListener passActionListener = e -> {
+            gameGUI.game.switchPlayer();
+            gameGUI.createGameCard();
+        };
+        passableButton.addActionListener(passActionListener);
         buttonPanel.add(passableButton);
 
         saveGameMenuButton = new StandardButton("Save Game");
-        saveGameMenuButton.addActionListener(gameGUI.saveGameActionListener);
+        ActionListener saveGameActionListener = e -> UtilsGUI.saveGame(gameGUI);
+        saveGameMenuButton.addActionListener(saveGameActionListener);
         buttonPanel.add(saveGameMenuButton);
 
         checkEnableButtons();
@@ -75,7 +89,7 @@ class BoardPanel extends JPanel {
     private void checkEnableButtons(){
         // Disable undoButton at the beginning and at the end of the game
         undoButton.setEnabled(gameGUI.game.getTurn() != 0 && !gameGUI.game.isGameFinished());
-        // During the second turn, the pie rule can be invoked by the white player
+        // Pie rule can be invoked during the second turn
         pieRuleButton.setEnabled(gameGUI.game.getTurn() == 1);
         // Enable passableButton when necessary
         passableButton.setEnabled(gameGUI.game.checkPassable() && !gameGUI.game.isGameFinished());

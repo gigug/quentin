@@ -32,6 +32,7 @@ public class GameGUI extends JFrame{
 
     BoardPanel boardPanel;
 
+    ActionListener mainMenuActionListener = e -> CARDS.show(getContentPane(), "startMenuPanel");
     ActionListener newGameActionListener = e -> CARDS.show(getContentPane(), "selectSizePanel");
     ActionListener loadGameActionListener = e -> {
         UtilsGUI.loadGame(this);
@@ -39,19 +40,6 @@ public class GameGUI extends JFrame{
     };
     ActionListener infoActionListener = e -> CARDS.show(getContentPane(), "infoPanel");
     ActionListener exitGameActionListener = e -> System.exit(0);
-    ActionListener saveGameActionListener = e -> UtilsGUI.saveGame(this);
-    ActionListener passActionListener = e -> {
-        game.switchPlayer();
-        createGameCard();
-    };
-    ActionListener pieRuleActionListener = e -> {
-        game.pieRule();
-        createGameCard();
-    };
-    ActionListener undoMoveActionListener = e -> {
-        game.undoMove();
-        createGameCard();
-    };
 
     /**
      * Constructor for the GameGUI class.
@@ -65,7 +53,7 @@ public class GameGUI extends JFrame{
         SelectSizePanel selectSizePanel = new SelectSizePanel(this);
         add("selectSizePanel", selectSizePanel);
 
-        InfoPanel infoPanel = new InfoPanel();
+        InfoPanel infoPanel = new InfoPanel(this);
         add("infoPanel", infoPanel);
 
         MenuBar menuBar = new MenuBar(this);

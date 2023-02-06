@@ -18,6 +18,10 @@ class MenuBar extends JMenuBar {
         final JMenu fileMenu = new JMenu("File");
         add(fileMenu);
 
+        final JMenuItem mainMenuItem = new JMenuItem("Main Menu");
+        mainMenuItem.addActionListener(gameGUI.mainMenuActionListener);
+        fileMenu.add(mainMenuItem);
+
         final JMenuItem newGameMenuItem = new JMenuItem("New Game");
         newGameMenuItem.addActionListener(gameGUI.newGameActionListener);
         fileMenu.add(newGameMenuItem);

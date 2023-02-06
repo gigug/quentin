@@ -43,6 +43,10 @@ class SelectSizePanel extends JPanel {
         StandardButton tiles11Button = new StandardButton("11x11");
         tiles11Button.addActionListener(new NumberTilesActionListener(11, gameGUI));
         buttons.add(tiles11Button, constraints);
+
+        StandardButton mainMenuButton = new StandardButton("Back");
+        mainMenuButton.addActionListener(gameGUI.mainMenuActionListener);
+        buttons.add(mainMenuButton, constraints);
     }
 
     /**

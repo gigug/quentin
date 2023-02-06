@@ -39,7 +39,7 @@ class InfoPanel extends JPanel {
     /**
      * Constructor for InfoPanel.
      */
-    InfoPanel(){
+    InfoPanel(GameGUI gameGUI){
         super();
         setLayout(GameGUI.GRID_BAG_LAYOUT);
         setBackground(BACKGROUND_COLOR_INFO);
@@ -54,7 +54,11 @@ class InfoPanel extends JPanel {
         buttonPanel.setBackground(BACKGROUND_COLOR_INFO);
         add(buttonPanel, constraintsPanel);
 
-        JButton prevButton = new JButton("Previous");
+        StandardButton mainMenuButton = new StandardButton("Back");
+        mainMenuButton.addActionListener(gameGUI.mainMenuActionListener);
+        buttonPanel.add(mainMenuButton, constraintsButtons);
+
+        StandardButton prevButton = new StandardButton("<");
         ActionListener prevActionListener = e -> {
             currentText = currentText > 0 ? currentText - 1 : texts.length - 1;
             label.setText(texts[currentText]);
@@ -62,7 +66,7 @@ class InfoPanel extends JPanel {
         prevButton.addActionListener(prevActionListener);
         buttonPanel.add(prevButton, constraintsButtons);
 
-        JButton nextButton = new JButton("Next");
+        StandardButton nextButton = new StandardButton(">");
         ActionListener nextActionListener = e -> {
             currentText = currentText < texts.length - 1 ? currentText + 1 : 0;
             label.setText(texts[currentText]);
