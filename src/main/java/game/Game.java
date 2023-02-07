@@ -14,7 +14,7 @@ import players.PlayerColor;
  *
  * @author Gianluca Guglielmo
  */
-public class Game {
+public class Game implements FrozenGame{
     // Declare players
     final static PlayerColor BLACK_PLAYER = PlayerColor.BLACK;
     final static PlayerColor WHITE_PLAYER = PlayerColor.WHITE;
@@ -576,6 +576,9 @@ public class Game {
 
     /**
      * Method to carry out the sequence of actions needed at the end of a turn.
+     *
+     * @param X int representing the X coordinate of the stone.
+     * @param Y int representing the Y coordinate of the stone
      */
     public void progress(int X, int Y){
         addStack();

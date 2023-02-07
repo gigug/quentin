@@ -15,6 +15,9 @@ class GridPanel extends JPanel {
     private final static Color BOARD_COLOR = Color.decode("#815E5B");
     GameGUI gameGUI;
 
+    private final int size;
+    private final int numberTiles;
+
     /**
      * Default constructor for GridPanel.
      */
@@ -22,7 +25,10 @@ class GridPanel extends JPanel {
         super();
         this.gameGUI = gameGUI;
 
-        boardWidth = GameGUI.PANEL_WIDTH * (gameGUI.getNumberTiles() + 4);
+        size = gameGUI.getGridSize();
+        numberTiles = gameGUI.getNumberTiles();
+
+        boardWidth = GameGUI.PANEL_WIDTH * (numberTiles + 4);
         Dimension boardDimension = new Dimension(boardWidth, boardWidth);
 
         setLayout(GameGUI.GRID_BAG_LAYOUT);
@@ -78,11 +84,11 @@ class GridPanel extends JPanel {
         g2.setStroke(new BasicStroke(thicknessInternal));
 
         // Vertical lines
-        for (int i = 3; i < gameGUI.getNumberTiles() + 2; i++) g2.drawLine(internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint, GameGUI.PANEL_WIDTH * i);
+        for (int i = 3; i < numberTiles + 2; i++) g2.drawLine(internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint, GameGUI.PANEL_WIDTH * i);
 
 
         // Horizontal lines
-        for (int i = 3; i < gameGUI.getNumberTiles() + 2; i++) g2.drawLine(GameGUI.PANEL_WIDTH * i, internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint);
+        for (int i = 3; i < numberTiles + 2; i++) g2.drawLine(GameGUI.PANEL_WIDTH * i, internalReferencePoint, GameGUI.PANEL_WIDTH * i, boardWidth - internalReferencePoint);
 
 
         Color colorFill;
@@ -90,8 +96,8 @@ class GridPanel extends JPanel {
 
         // Stones
         FrozenBoard board = gameGUI.game.getFrozenBoard();
-        for(int i = 0; i < gameGUI.game.getSize(); i++) {
-            for (int j = 0; j < gameGUI.game.getSize(); j++) {
+        for(int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (board.getStone(i,j) != 0){
                     colorFill = (board.getStone(i, j) == 1 || board.getStone(i, j) == 3) ? Color.BLACK : Color.WHITE;
                     g2.setColor(colorFill);

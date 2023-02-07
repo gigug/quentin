@@ -1,10 +1,10 @@
 package gui;
 
+import game.FrozenGame;
 import players.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 /**
@@ -23,6 +23,7 @@ class BoardPanel extends JPanel {
     private final StandardButton passableButton;
     private final StandardButton saveGameMenuButton;
     GameGUI gameGUI;
+    FrozenGame frozenGame;
 
     /**
      * Default constructor for BoardPanel.
@@ -30,6 +31,7 @@ class BoardPanel extends JPanel {
     BoardPanel(GameGUI gameGUI){
         super();
         this.gameGUI = gameGUI;
+        this.frozenGame = gameGUI.getFrozenGame();
 
         setLayout(GameGUI.GRID_BAG_LAYOUT);
         setBackground(BACKGROUND_COLOR_BOARD);
@@ -52,32 +54,19 @@ class BoardPanel extends JPanel {
         add(buttonPanel, constraints);
 
         undoButton = new StandardButton("Undo move");
-        ActionListener undoMoveActionListener = e -> {
-            gameGUI.game.undoMove();
-            gameGUI.createGameCard();
-        };
-        undoButton.addActionListener(undoMoveActionListener);
+        undoButton.addActionListener(gameGUI.undoMoveActionListener);
         buttonPanel.add(undoButton);
 
         pieRuleButton = new StandardButton("Switch sides");
-        ActionListener pieRuleActionListener = e -> {
-            gameGUI.game.pieRule();
-            gameGUI.createGameCard();
-        };
-        pieRuleButton.addActionListener(pieRuleActionListener);
+        pieRuleButton.addActionListener(gameGUI.pieRuleActionListener);
         buttonPanel.add(pieRuleButton);
 
         passableButton = new StandardButton("Pass");
-        ActionListener passActionListener = e -> {
-            gameGUI.game.switchPlayer();
-            gameGUI.createGameCard();
-        };
-        passableButton.addActionListener(passActionListener);
+        passableButton.addActionListener(gameGUI.passActionListener);
         buttonPanel.add(passableButton);
 
         saveGameMenuButton = new StandardButton("Save Game");
-        ActionListener saveGameActionListener = e -> gameGUI.saveGame();
-        saveGameMenuButton.addActionListener(saveGameActionListener);
+        saveGameMenuButton.addActionListener(gameGUI.saveGameActionListener);
         buttonPanel.add(saveGameMenuButton);
 
         checkEnableButtons();
@@ -88,13 +77,13 @@ class BoardPanel extends JPanel {
      */
     private void checkEnableButtons(){
         // Disable undoButton at the beginning and at the end of the game
-        undoButton.setEnabled(gameGUI.game.getTurn() != 0 && !gameGUI.game.isGameFinished());
+        undoButton.setEnabled(frozenGame.getTurn() != 0 && !frozenGame.isGameFinished());
         // Pie rule can be invoked during the second turn
-        pieRuleButton.setEnabled(gameGUI.game.getTurn() == 1);
+        pieRuleButton.setEnabled(frozenGame.getTurn() == 1);
         // Enable passableButton when necessary
-        passableButton.setEnabled(gameGUI.game.checkPassable() && !gameGUI.game.isGameFinished());
+        passableButton.setEnabled(frozenGame.checkPassable() && !frozenGame.isGameFinished());
         // Disable saveGame at the end of the game
-        saveGameMenuButton.setEnabled(!gameGUI.game.isGameFinished());
+        saveGameMenuButton.setEnabled(!frozenGame.isGameFinished());
     }
 
     /**
@@ -104,26 +93,27 @@ class BoardPanel extends JPanel {
         String text;
         Color circleColor;
         ImageIcon circleIcon;
+        boolean finished = frozenGame.isGameFinished();
+        int winner = frozenGame.getWinner();
+        PlayerColor currentPlayer = frozenGame.getCurrentPlayer();
 
         // Display final message if game is finished
-        if (gameGUI.game.isGameFinished()){
-            if (gameGUI.game.getWinner() == 0){
+        if (finished){
+            if (winner == 0){
                 text = "Tie!";
                 circleColor = Color.BLUE;
             }
             else{
-                text = (gameGUI.game.getWinner() == 1) ? "Winner: black":"Winner: white";
-                circleColor = (gameGUI.game.getWinner() == 1) ? Color.BLACK:Color.WHITE;
+                text = (winner == 1) ? "Winner: black":"Winner: white";
+                circleColor = (winner == 1) ? Color.BLACK:Color.WHITE;
             }
-
         }
         else{
-            text = (gameGUI.game.getCurrentPlayer() == PlayerColor.BLACK) ? "Turn: black":"Turn: white";
-            circleColor = (gameGUI.game.getCurrentPlayer() == PlayerColor.BLACK) ? Color.BLACK:Color.WHITE;
+            text = (currentPlayer == PlayerColor.BLACK) ? "Turn: black":"Turn: white";
+            circleColor = (currentPlayer == PlayerColor.BLACK) ? Color.BLACK:Color.WHITE;
         }
 
         circleIcon = getCircleIcon(circleColor);
-
         circleLabel.setIcon(circleIcon);
         turnLabel.setText(text);
     }

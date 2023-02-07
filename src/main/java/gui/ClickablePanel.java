@@ -1,5 +1,7 @@
 package gui;
 
+import game.FrozenGame;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -12,6 +14,7 @@ import java.awt.event.MouseListener;
  */
 class ClickablePanel extends JPanel {
     GameGUI gameGUI;
+    FrozenGame frozenGame;
 
     /**
      * Default constructor for ClickablePanel.
@@ -21,6 +24,7 @@ class ClickablePanel extends JPanel {
         setOpaque(false);
 
         this.gameGUI = gameGUI;
+        this.frozenGame = gameGUI.getFrozenGame();
         int size = gameGUI.getGridSize();
 
         // Set preferred size for button placement grid
@@ -28,7 +32,7 @@ class ClickablePanel extends JPanel {
         Dimension clickableDimension = new Dimension(clickableWidth, clickableWidth);
         setPreferredSize(clickableDimension);
 
-        if (!gameGUI.game.isGameFinished()){
+        if (!frozenGame.isGameFinished()){
             setLayout(new GridLayout(size, size));
 
             // Create a button for each square and add it to the panel
@@ -59,7 +63,7 @@ class ClickablePanel extends JPanel {
 
         // Color hovered cells green if a stone can be placed there, otherwise red
         if (gameGUI.hX > -1) {
-            if (gameGUI.game.checkPlaceable(gameGUI.hX, gameGUI.hY)) g2.setColor(Color.GREEN);
+            if (frozenGame.checkPlaceable(gameGUI.hX, gameGUI.hY)) g2.setColor(Color.GREEN);
             else g2.setColor(Color.RED);
             g2.fillOval(GameGUI.PANEL_WIDTH * gameGUI.hX, GameGUI.PANEL_WIDTH * gameGUI.hY, GameGUI.PANEL_WIDTH, GameGUI.PANEL_WIDTH);
         }
@@ -73,6 +77,7 @@ class ClickablePanel extends JPanel {
         private final int Y;
         private final ClickablePanel clickablePanel;
         private final GameGUI gameGUI;
+        private final FrozenGame frozenGame;
 
         /**
          * Constructor for gridMouseListener.
@@ -86,6 +91,7 @@ class ClickablePanel extends JPanel {
             this.X = X;
             this.Y = Y;
             this.gameGUI = gameGUI;
+            this.frozenGame = gameGUI.getFrozenGame();
             this.clickablePanel = clickablePanel;
         }
         /**
@@ -95,12 +101,11 @@ class ClickablePanel extends JPanel {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (gameGUI.game.checkPlaceable(X, Y)){
-                gameGUI.game.progress(X, Y);
-                gameGUI.boardPanel.setTurnLabel();
+            if (frozenGame.checkPlaceable(X, Y)){
+                gameGUI.progress(X, Y);
             }
             // If special case, recreate board to allow for new buttons
-            if (gameGUI.game.getTurn() == 1 || gameGUI.game.getTurn() == 2 || gameGUI.game.checkPassable() || gameGUI.game.isGameFinished()) gameGUI.createGameCard();
+            if (frozenGame.getTurn() == 1 || frozenGame.getTurn() == 2 || frozenGame.checkPassable() || frozenGame.isGameFinished()) gameGUI.createGameCard();
             repaint(-1, -1);
         }
 

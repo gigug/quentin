@@ -1,5 +1,7 @@
 package gui;
 
+import game.FrozenGame;
+import objects.FrozenBoard;
 import players.PlayerColor;
 import game.Game;
 
@@ -18,7 +20,6 @@ import java.util.Stack;
 public class GameGUI extends JFrame{
     private final static Dimension MINIMUM_WINDOW_DIMENSION = new Dimension(1000, 1000);
     final static int PANEL_WIDTH = 30;
-    final static Insets INSETS = new Insets(5, 0, 5, 0);
 
     // CardLayout used to switch between different panels
     final CardLayout CARDS = new CardLayout();
@@ -40,7 +41,19 @@ public class GameGUI extends JFrame{
     };
     ActionListener infoActionListener = e -> CARDS.show(getContentPane(), "infoPanel");
     ActionListener exitGameActionListener = e -> System.exit(0);
-
+    ActionListener undoMoveActionListener = e -> {
+        game.undoMove();
+        createGameCard();
+    };
+    ActionListener pieRuleActionListener = e -> {
+        game.pieRule();
+        createGameCard();
+    };
+    ActionListener passActionListener = e -> {
+        game.switchPlayer();
+        createGameCard();
+    };
+    ActionListener saveGameActionListener = e -> saveGame();
     /**
      * Constructor for the GameGUI class.
      */
@@ -57,9 +70,9 @@ public class GameGUI extends JFrame{
         add("infoPanel", infoPanel);
 
         MenuBar menuBar = new MenuBar(this);
+        setJMenuBar(menuBar);
 
         setTitle("Quentin");
-        setJMenuBar(menuBar);
 
         // Window settings
         setResizable(true);
@@ -118,6 +131,17 @@ public class GameGUI extends JFrame{
      */
     int getGridSize(){
         return game.getSize();
+    }
+
+    /**
+     * Method to carry out the sequence of actions needed at the end of a turn.
+     *
+     * @param X int representing the X coordinate of the stone.
+     * @param Y int representing the Y coordinate of the stone
+     */
+    void progress(int X, int Y){
+        game.progress(X, Y);
+        boardPanel.setTurnLabel();
     }
 
     /**
@@ -215,6 +239,15 @@ public class GameGUI extends JFrame{
         int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);
         this.setLocation(x, y);
+    }
+
+    /**
+     * Method to return frozen version of the game for safe handling;
+     *
+     * @return frozenGame.
+     */
+    FrozenGame getFrozenGame() {
+        return game;
     }
 }
 

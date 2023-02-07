@@ -16,7 +16,7 @@ class Constraints extends GridBagConstraints {
         super();
 
         gridwidth = GridBagConstraints.REMAINDER;
-        insets = GameGUI.INSETS;
+        insets = new Insets(5, 0, 5, 0);
 
         if (aligned) fill = GridBagConstraints.HORIZONTAL;
     }
