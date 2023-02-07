@@ -79,6 +79,7 @@ public class Board implements FrozenBoard{
      * @param Y int representing the y position of the stone.
      * @return int representing the color of the stone, 0 if empty or outside the grid.
      */
+    @Override
     public int getStone(int X, int Y){
         if (checkInGrid(X, Y)) return grid[X][Y];
         return 0;

@@ -79,6 +79,7 @@ public class Game implements FrozenGame{
      *
      * @return color of current player.
      */
+    @Override
     public PlayerColor getCurrentPlayer() {
         return currentPlayer;
     }
@@ -144,6 +145,7 @@ public class Game implements FrozenGame{
      * @param Y int representing the y position of the stone.
      * @return boolean indicating whether the stone can be placed.
      */
+    @Override
     public boolean checkPlaceable(int X, int Y){
         return (board.checkEmpty(X, Y) && checkDiagonal(X, Y));
     }
@@ -153,6 +155,7 @@ public class Game implements FrozenGame{
      *
      * @return true if turn is passable.
      */
+    @Override
     public boolean checkPassable() {
         boolean passable = true;
 
@@ -431,6 +434,7 @@ public class Game implements FrozenGame{
      *
      * @return finished boolean.
      */
+    @Override
     public boolean isGameFinished() {
         return gameFinished;
     }
@@ -459,6 +463,7 @@ public class Game implements FrozenGame{
      *
      * @return winner int representing the winner.
      */
+    @Override
     public int getWinner(){
         return winner;
     }
@@ -477,6 +482,7 @@ public class Game implements FrozenGame{
      *
      * @return turn int representing the turn.
      */
+    @Override
     public int getTurn(){
         return turn;
     }
