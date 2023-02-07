@@ -75,7 +75,7 @@ class BoardPanel extends JPanel {
     /**
      * Method used to check whether to enable or disable the Board buttons.
      */
-    private void checkEnableButtons(){
+    void checkEnableButtons(){
         // Disable undoButton at the beginning and at the end of the game
         undoButton.setEnabled(frozenGame.getTurn() != 0 && !frozenGame.isGameFinished());
         // Pie rule can be invoked during the second turn

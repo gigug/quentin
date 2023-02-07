@@ -101,11 +101,10 @@ class ClickablePanel extends JPanel {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (frozenGame.checkPlaceable(X, Y)){
-                gameGUI.progress(X, Y);
-            }
-            // If special case, recreate board to allow for new buttons
-            if (frozenGame.getTurn() == 1 || frozenGame.getTurn() == 2 || frozenGame.checkPassable() || frozenGame.isGameFinished()) gameGUI.createGameCard();
+            if (frozenGame.checkPlaceable(X, Y)) gameGUI.progress(X, Y);
+            // If special case, enable/disable buttons
+            if (frozenGame.getTurn() == 1 || frozenGame.getTurn() == 2 || frozenGame.checkPassable()) gameGUI.boardPanel.checkEnableButtons();
+            if (frozenGame.isGameFinished()) gameGUI.createGameCard();
             repaint(-1, -1);
         }
 
