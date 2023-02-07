@@ -1,7 +1,7 @@
 package gui;
 
 import players.PlayerColor;
-import screens.Game;
+import game.Game;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
